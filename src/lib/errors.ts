@@ -34,6 +34,7 @@ const RAISED: Record<string, [status: number, message: string]> = {
   draw_not_simulated: [409, 'Run a simulation before publishing.'],
   draw_out_of_order: [409, 'A later draw has already been published.'],
   draw_stale_rollover: [409, 'The jackpot rollover changed. Run the simulation again.'],
+  draw_is_published: [409, 'A published draw cannot be changed.'],
   draw_pool_mismatch: [422, 'The prize ledger does not add up to the pool.'],
   draw_tier_mismatch: [422, 'The prize ledger does not match the winners found.'],
 };
@@ -50,11 +51,16 @@ export function fromDbError(error: DbErrorLike): AppError {
   if (raised) return new AppError(raised[0], error.message, raised[1]);
 
   switch (error.code) {
-    case '23505': // unique_violation
-      if (error.details?.includes('played_on')) {
+    case '23505': {
+      // unique_violation. PostgREST puts the constraint name in the message, not in `details`.
+      const constraint = error.message.match(/constraint "([^"]+)"/)?.[1];
+      if (constraint === 'scores_user_date_key') {
         return conflict('duplicate_score_date', 'You already have a score for that date. Edit or delete it instead.');
       }
+      if (constraint === 'draws_period_key') return conflict('draw_period_exists', 'A draw for that month already exists.');
+      if (constraint === 'charities_slug_key') return conflict('slug_taken', 'Another charity already uses that slug.');
       return conflict('already_exists', 'That already exists.');
+    }
     case '23503': // foreign_key_violation
       return conflict('in_use', 'That is still referenced by other records.');
     case '23514': // check_violation
