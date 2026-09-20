@@ -3,3 +3,20 @@
 
 # Design docs folder
 docs/
+
+# Dependencies and build output
+node_modules/
+.next/
+out/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+
+# Environment: never commit secrets (.env.example stays tracked)
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
