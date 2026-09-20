@@ -1,0 +1,5 @@
+# PDFs anywhere in the repo
+*.pdf
+
+# Design docs folder
+docs/
