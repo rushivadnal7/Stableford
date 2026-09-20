@@ -1,5 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { fromDbError, forbidden, subscriptionRequired, unauthorized } from '@/lib/errors';
+import { adminClient } from '@/lib/supabase/admin';
 import { cookieClient, tokenClient } from '@/lib/supabase/user';
 import type { Profile } from '@/lib/types';
 
@@ -34,6 +35,15 @@ export async function requireAdmin(req: Request): Promise<AuthContext> {
   const ctx = await authenticate(req);
   if (ctx.profile.role !== 'admin') throw forbidden('Administrators only.');
   return ctx;
+}
+
+/**
+ * For admin routes: verify the caller is an admin, then hand back the service-role client. Admin
+ * operations bypass RLS, so this check is what guards them. It must run before any admin query.
+ */
+export async function adminContext(req: Request): Promise<{ actorId: string; admin: SupabaseClient }> {
+  const ctx = await requireAdmin(req);
+  return { actorId: ctx.userId, admin: adminClient() };
 }
 
 /** The entitlement rule lives in SQL (`is_active_subscriber`) so the API and RLS can never disagree. */

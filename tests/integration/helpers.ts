@@ -130,6 +130,12 @@ export async function resetDb() {
                 public.draws, public.donations, public.stripe_events, public.audit_log,
                 public.scores, public.subscriptions restart identity`,
     );
+    // Charities created by a test run go too; the six seeded ones stay.
+    await client.query(
+      `delete from public.charities
+       where slug not in ('bright-start-kids', 'clean-tide-alliance', 'open-door-health', 'second-innings', 'green-roots-trust', 'young-voices-fund')`,
+    );
+    await client.query(`update public.charities set is_active = true`);
   } finally {
     await client.end();
   }
