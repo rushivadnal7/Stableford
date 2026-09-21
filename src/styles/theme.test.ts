@@ -47,6 +47,8 @@ const PAIRS: Array<[string, string, number]> = [
   ['--accent-text', '--surface', 4.5],
   ['--on-action', '--action', 4.5],
   ['--on-action', '--action-hover', 4.5],
+  ['--on-accent', '--accent', 4.5],
+  ['--on-accent', '--warm', 4.5],
   ['--success', '--bg', 4.5],
   ['--success', '--surface', 4.5],
   ['--danger', '--bg', 4.5],

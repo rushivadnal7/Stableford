@@ -28,6 +28,7 @@
   --duration-slow: 600ms;
   --duration-slower: 900ms;
   --reveal-distance: 1.25rem;
+  --stagger: 90ms; /* delay between siblings that animate in one after another */
 
   /* Stacking order, lowest to highest. */
   --z-raised: 10;
@@ -69,10 +70,10 @@
   --text-4xl--letter-spacing: -0.03em;
   --text-5xl: clamp(2.75rem, 1.7rem + 5.2vw, 5rem);
   --text-5xl--line-height: 1.02;
-  --text-5xl--letter-spacing: -0.035em;
+  --text-5xl--letter-spacing: -0.03em;
   --text-6xl: clamp(2.75rem, 1.5rem + 6vw, 5.5rem);
   --text-6xl--line-height: 1;
-  --text-6xl--letter-spacing: -0.04em;
+  --text-6xl--letter-spacing: -0.032em;
 
   --font-weight-*: initial;
   --font-weight-regular: 400;
@@ -101,7 +102,7 @@
 
   /* Widths for max-w-*. */
   --container-*: initial;
-  --container-prose: 38rem;
+  --container-copy: 38rem; /* comfortable reading width */
   --container-narrow: 48rem;
   --container-content: 64rem;
   --container-page: 76rem;

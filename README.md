@@ -7,12 +7,13 @@ Subscribers pay monthly or yearly, log their latest five Stableford scores, and 
 draw where their scores are matched against the drawn numbers. Part of every fee goes to a charity they choose.
 An admin runs the draws, manages charities and users, and verifies and pays winners.
 
-**Status:** phase 1 is complete: database, business logic and a full JSON API (see [API.md](API.md)),
-verified by 157 automated tests. The web interface is phase 2.
+**Status:** the backend (database, business logic, full JSON API, see [API.md](API.md)) is complete. On the web
+interface, the design system and the home page are done; sign-up, sign-in, the dashboards and the admin panel are next.
+220 automated tests cover it.
 
 ## Stack
 
-Next.js (App Router) and TypeScript on Vercel, Supabase (Postgres, Auth, Storage), Stripe, Zod, Vitest.
+Next.js (App Router) and TypeScript on Vercel, Tailwind CSS 4, Supabase (Postgres, Auth, Storage), Stripe, Zod, Vitest.
 
 The backend is the Next.js server code itself (route handlers), not a separate NestJS, Express or Python service.
 The custom logic is 34 small routes on top of Supabase, Vercel is serverless, and one codebase in one
@@ -48,7 +49,7 @@ Sign in through Supabase Auth to get an access token, then call the API (see [AP
 |---|---|
 | `npm run dev` / `build` / `start` | Next.js |
 | `npm run lint` / `typecheck` | ESLint / TypeScript |
-| `npm test` | 38 unit tests, no services needed |
+| `npm test` | 101 unit tests, no services needed: business rules, prize maths, and the theme (contrast and design-token guards) |
 | `npm run test:integration` | 119 tests against the local Supabase stack: schema rules, RLS, the draw engine, the whole API and a full lifecycle |
 | `npm run db:start` / `db:stop` / `db:reset` | Local Supabase; `db:reset` re-applies migrations and seed data |
 | `npm run seed:demo` | Demo accounts. Add `-- --allow-remote` to seed a hosted project |
@@ -89,6 +90,23 @@ Browser -> Next.js route handlers (validate, authorise) -> src/modules (rules) -
 - **Files never pass through the server.** Proof screenshots and charity images upload straight to Storage with
   short-lived signed URLs (Vercel caps request bodies near 4.5 MB); the proofs bucket is private.
 
+## Design system
+
+Every colour, font, size, weight, space, radius, shadow and motion value comes from one place, `src/styles/`.
+Tokens (raw values) feed theme roles (`bg-canvas`, `text-fg`, `bg-action`, per light and dark theme), which feed
+named utilities (`type-h2`, `section-y`), which components use. Components contain no raw values, and a test fails if
+they do. Any element can switch to the dark theme with `data-theme="dark"`.
+
+- Palette: Bokara Grey, Dark Hunter Green, Lucious Lime, Wet Sand, Whisper White, Bright White.
+- Fonts: Instrument Sans (text), Instrument Serif (emphasis and numbers), Geist Mono (labels and scores), via `next/font`.
+- Accessibility: `theme.test.ts` evaluates the real CSS and asserts WCAG contrast for every role pair in both themes.
+- Motion respects `prefers-reduced-motion`; nothing is hidden if scripts do not run.
+
+See [src/styles/README.md](src/styles/README.md) for how to change a colour, a font, a size or add a role.
+
+The home page reads its plans and charities from the database (rebuilt every five minutes) and falls back to built-in
+content if the database is unreachable. All of its copy lives in `src/content/home.ts`.
+
 ## Assumptions
 
 The PRD leaves some things open. These are the choices made, all adjustable:
@@ -123,8 +141,12 @@ Use a **new** Vercel account and a **new** Supabase project.
 
 ```
 src/app/api/     thin route handlers: validate, authorise, call a service
-src/modules/     business logic by domain: scores, draws, billing, charities, winners, dashboard, admin
-src/lib/         config, env, errors, auth, Supabase and Stripe clients
+src/app/(marketing)/  the public site (home page); more pages share its header and footer
+src/modules/     business logic by domain: scores, draws, billing, charities, winners, dashboard, admin, home
+src/components/  ui (design-system primitives), layout (header, footer), home (page sections)
+src/content/     the words on the page, kept apart from the components
+src/styles/      design tokens, theme roles, named utilities (see its README)
+src/lib/         config, env, errors, auth, Supabase and Stripe clients, fonts, routes
 supabase/        migrations (the schema is the source of truth) and seed data
 tests/           integration tests
 scripts/         demo data
@@ -137,6 +159,8 @@ Commits follow Conventional Commits. CI runs lint, type check, unit tests and a 
 
 ## Not done yet
 
-- The web interface (phase 2). The session-refresh proxy for cookie sessions arrives with it.
+- The rest of the web interface: sign up and sign in, the member dashboard, the charity directory and the admin panel.
+  Their links (`/signup`, `/login`, `/charities`) currently lead to a branded 404. The session-refresh proxy for cookie
+  sessions arrives with the sign-in pages.
 - Integration tests in CI (they need a Supabase stack; the recipe is `supabase start` then `npm run test:integration`).
 - Email notifications beyond Supabase Auth emails, and scheduled (automatic) draws.

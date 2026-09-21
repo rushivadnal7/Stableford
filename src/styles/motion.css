@@ -1,21 +1,20 @@
 /*
  * MOTION: scroll-reveal.
- * Elements marked data-reveal start hidden and fade up when they scroll into view (see components/ui/reveal.tsx).
- * Only applies when scripting is on and the user has not asked for reduced motion, so content is never hidden
- * for anyone who cannot see the animation.
+ * components/ui/reveal.tsx marks elements that start below the fold as "pending" once the page has loaded,
+ * then "shown" as they scroll into view. Nothing is hidden in the server-rendered HTML, so the page reads
+ * fine without scripts, in print, or with reduced motion (the component skips marking in that case).
+ * The transition sits on the "shown" state, so an element animates in but is never animated out.
  */
 @layer components {
-  @media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
-    [data-reveal] {
-      opacity: 0;
-      transform: translateY(var(--reveal-distance));
-      transition:
-        opacity var(--duration-slow) var(--ease-emphasized) var(--reveal-delay, 0ms),
-        transform var(--duration-slower) var(--ease-emphasized) var(--reveal-delay, 0ms);
-    }
-    [data-reveal][data-revealed='true'] {
-      opacity: 1;
-      transform: none;
-    }
+  [data-reveal='pending'] {
+    opacity: 0;
+    transform: translateY(var(--reveal-distance));
+  }
+  [data-reveal='shown'] {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity var(--duration-slow) var(--ease-emphasized) var(--reveal-delay, 0ms),
+      transform var(--duration-slower) var(--ease-emphasized) var(--reveal-delay, 0ms);
   }
 }

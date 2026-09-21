@@ -31,7 +31,7 @@ export function Section({
     <section
       id={id}
       data-theme={tone === 'dark' ? 'dark' : undefined}
-      className={cn('section-y scroll-mt-header text-fg', TONES[tone], className)}
+      className={cn('section-y text-fg', TONES[tone], className)}
     >
       {contained ? <div className="container-page">{children}</div> : children}
     </section>
