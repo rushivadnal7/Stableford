@@ -1,0 +1,95 @@
+/*
+ * THEME: what the colours MEAN.
+ *
+ * Components ask for a role (bg-canvas, text-fg, bg-action), never for a colour. Each theme maps every
+ * role to palette values, so the same markup works on a light page and inside a dark panel:
+ *
+ *     <section data-theme="dark"> ...anything inside is dark... </section>
+ *
+ * Every role must be defined in BOTH themes; theme.test.ts checks that, and checks WCAG contrast.
+ * To retune a colour, change a palette value in tokens.css or a mix below; derived shades follow.
+ */
+
+/* LIGHT (the default) */
+:root,
+[data-theme='light'] {
+  color-scheme: light;
+
+  --bg: var(--palette-bright);
+  --bg-alt: var(--palette-whisper);
+  --surface: color-mix(in oklab, var(--palette-bright) 50%, var(--palette-white));
+
+  --fg: var(--palette-bokara);
+  --fg-muted: color-mix(in oklab, var(--palette-bokara) 72%, var(--palette-bright));
+  --line: color-mix(in oklab, var(--palette-bokara) 12%, var(--palette-bright));
+  --line-strong: color-mix(in oklab, var(--palette-bokara) 28%, var(--palette-bright));
+
+  --action: var(--palette-hunter);
+  --action-hover: color-mix(in oklab, var(--palette-hunter) 86%, var(--palette-bokara));
+  --on-action: var(--palette-bright);
+
+  --accent: var(--palette-lime); /* decoration only: fills, dots, underlines */
+  --accent-text: color-mix(in oklab, var(--palette-sand) 52%, var(--palette-bokara)); /* accent you can read */
+  --warm: var(--palette-sand); /* decoration only */
+  --ring: var(--palette-hunter);
+
+  --success: var(--palette-hunter);
+  --danger: var(--palette-clay);
+
+  --glass: color-mix(in oklab, var(--palette-white) 55%, transparent);
+  --glass-line: color-mix(in oklab, var(--palette-bokara) 10%, transparent);
+}
+
+/* DARK (used by dark panels; add `data-theme="dark"` to any element) */
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --bg: var(--palette-bokara);
+  --bg-alt: var(--palette-hunter);
+  --surface: color-mix(in oklab, var(--palette-hunter) 55%, var(--palette-bokara));
+
+  --fg: var(--palette-bright);
+  --fg-muted: color-mix(in oklab, var(--palette-bright) 76%, var(--palette-bokara));
+  --line: color-mix(in oklab, var(--palette-bright) 14%, var(--palette-bokara));
+  --line-strong: color-mix(in oklab, var(--palette-bright) 30%, var(--palette-bokara));
+
+  --action: var(--palette-lime);
+  --action-hover: color-mix(in oklab, var(--palette-lime) 88%, var(--palette-bright));
+  --on-action: var(--palette-bokara);
+
+  --accent: var(--palette-lime);
+  --accent-text: color-mix(in oklab, var(--palette-lime) 65%, var(--palette-bright));
+  --warm: var(--palette-sand);
+  --ring: var(--palette-lime);
+
+  --success: color-mix(in oklab, var(--palette-lime) 65%, var(--palette-bright));
+  --danger: color-mix(in oklab, var(--palette-clay) 55%, var(--palette-bright));
+
+  --glass: color-mix(in oklab, var(--palette-bright) 7%, transparent);
+  --glass-line: color-mix(in oklab, var(--palette-bright) 16%, transparent);
+}
+
+/*
+ * Expose the roles to Tailwind as colour utilities: bg-canvas, text-fg, border-line, ...
+ * `inline` makes each utility read the live variable, so it follows whichever theme is in scope.
+ */
+@theme inline {
+  --color-canvas: var(--bg);
+  --color-canvas-alt: var(--bg-alt);
+  --color-surface: var(--surface);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-action: var(--action);
+  --color-action-hover: var(--action-hover);
+  --color-on-action: var(--on-action);
+  --color-accent: var(--accent);
+  --color-accent-text: var(--accent-text);
+  --color-warm: var(--warm);
+  --color-ring: var(--ring);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --color-glass: var(--glass);
+  --color-glass-line: var(--glass-line);
+}

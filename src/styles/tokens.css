@@ -1,0 +1,195 @@
+/*
+ * DESIGN TOKENS: the single source of truth for every visual decision.
+ *
+ * Layers (each depends only on the one above it):
+ *   1. tokens.css     raw values: brand palette, type scale, spacing, radii, shadows, motion    <- you are here
+ *   2. theme.css      meaning: semantic colour roles per theme (light, dark), exposed to Tailwind
+ *   3. utilities.css  named building blocks made from tokens (type styles, page layout)
+ *   4. components     use only names from 2 and 3: bg-canvas, text-fg, type-h2, p-6, rounded-xl ...
+ *
+ * To change the look, edit a token here or in theme.css. Never put a colour, font, size or spacing
+ * value in a component: src/styles/theme.test.ts fails the build if you do.
+ */
+
+/* 1. Brand palette. Raw colours live here and nowhere else; only theme.css may reference them. */
+:root {
+  --palette-bokara: #2a2725; /* Bokara Grey: deepest neutral, text on light, base of dark panels */
+  --palette-hunter: #3a4a3f; /* Dark Hunter Green: primary brand, actions on light */
+  --palette-lime: #91a673; /* Lucious Lime: fresh accent, actions on dark */
+  --palette-sand: #ae8f60; /* Wet Sand: warm accent */
+  --palette-whisper: #eae2d3; /* Whisper White: alternate light surface */
+  --palette-bright: #f6f2f1; /* Bright White: page background */
+  --palette-white: #ffffff;
+  --palette-clay: #a6432f; /* functional (errors); not part of the brand palette */
+
+  /* Motion. Durations are plain variables; easings are theme tokens below. */
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 600ms;
+  --duration-slower: 900ms;
+  --reveal-distance: 1.25rem;
+
+  /* Stacking order, lowest to highest. */
+  --z-raised: 10;
+  --z-header: 50;
+  --z-overlay: 60;
+}
+
+/* 2. Scales. `static` keeps every variable in the output, so they are usable from plain CSS too. */
+@theme static {
+  /* Colours are defined by role in theme.css, so drop Tailwind's default palette: off-palette colours cannot exist. */
+  --color-*: initial;
+
+  /* Fonts. The families come from src/lib/fonts.ts (next/font); change the font there. */
+  --font-*: initial;
+  --font-sans: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-instrument-serif), ui-serif, Georgia, serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Type scale: fluid between a 360px and a 1440px screen. Each size carries its own line height and tracking. */
+  --text-*: initial;
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1.4;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.5;
+  --text-base: 1rem;
+  --text-base--line-height: 1.6;
+  --text-lg: clamp(1.0625rem, 1.02rem + 0.22vw, 1.1875rem);
+  --text-lg--line-height: 1.55;
+  --text-xl: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);
+  --text-xl--line-height: 1.4;
+  --text-2xl: clamp(1.5rem, 1.3rem + 1vw, 2rem);
+  --text-2xl--line-height: 1.25;
+  --text-2xl--letter-spacing: -0.015em;
+  --text-3xl: clamp(1.875rem, 1.5rem + 1.9vw, 2.75rem);
+  --text-3xl--line-height: 1.15;
+  --text-3xl--letter-spacing: -0.02em;
+  --text-4xl: clamp(2.25rem, 1.6rem + 3.2vw, 3.75rem);
+  --text-4xl--line-height: 1.08;
+  --text-4xl--letter-spacing: -0.03em;
+  --text-5xl: clamp(2.75rem, 1.7rem + 5.2vw, 5rem);
+  --text-5xl--line-height: 1.02;
+  --text-5xl--letter-spacing: -0.035em;
+  --text-6xl: clamp(2.75rem, 1.5rem + 6vw, 5.5rem);
+  --text-6xl--line-height: 1;
+  --text-6xl--letter-spacing: -0.04em;
+
+  --font-weight-*: initial;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --tracking-*: initial;
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.04em;
+  --tracking-eyebrow: 0.14em;
+
+  --leading-*: initial;
+  --leading-tight: 1.1;
+  --leading-snug: 1.3;
+  --leading-normal: 1.55;
+  --leading-relaxed: 1.7;
+
+  /* Spacing: Tailwind's 4px grid (p-4 = 1rem) plus named layout spaces. */
+  --spacing: 0.25rem;
+  --spacing-gutter: clamp(1rem, 0.5rem + 2vw, 2rem); /* page side padding */
+  --spacing-section: clamp(4.5rem, 3rem + 6vw, 8.5rem); /* vertical padding of a page section */
+  --spacing-inset: clamp(0.5rem, 0.2rem + 1.2vw, 1.25rem); /* margin around full-width panels */
+  --spacing-header: 4.5rem; /* height of the site header */
+
+  /* Widths for max-w-*. */
+  --container-*: initial;
+  --container-prose: 38rem;
+  --container-narrow: 48rem;
+  --container-content: 64rem;
+  --container-page: 76rem;
+
+  --breakpoint-*: initial;
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+  --breakpoint-2xl: 96rem;
+
+  --radius-*: initial;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+  --radius-3xl: 2.5rem;
+  --radius-pill: 9999px;
+
+  /* Shadows are tinted with the palette, not pure black. */
+  --shadow-*: initial;
+  --shadow-soft: 0 1px 2px color-mix(in oklab, var(--palette-bokara) 8%, transparent),
+    0 8px 24px -12px color-mix(in oklab, var(--palette-bokara) 18%, transparent);
+  --shadow-lift: 0 2px 4px color-mix(in oklab, var(--palette-bokara) 10%, transparent),
+    0 22px 44px -18px color-mix(in oklab, var(--palette-bokara) 32%, transparent);
+  --shadow-glow: 0 0 0 1px color-mix(in oklab, var(--palette-bright) 14%, transparent),
+    0 28px 70px -24px color-mix(in oklab, var(--palette-lime) 45%, transparent);
+
+  --blur-*: initial;
+  --blur-sm: 6px;
+  --blur-md: 14px;
+  --blur-lg: 28px;
+
+  /* Signature gradient: the palette's dark-to-lime sweep. */
+  --background-image-hero: radial-gradient(
+    120% 95% at 88% -8%,
+    var(--palette-lime) 0%,
+    color-mix(in oklab, var(--palette-lime) 45%, var(--palette-hunter)) 24%,
+    var(--palette-hunter) 56%,
+    var(--palette-bokara) 100%
+  );
+  --background-image-cta: radial-gradient(
+    110% 130% at 8% 110%,
+    color-mix(in oklab, var(--palette-lime) 70%, var(--palette-hunter)) 0%,
+    var(--palette-hunter) 48%,
+    var(--palette-bokara) 100%
+  );
+
+  /* Motion. */
+  --ease-*: initial;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --default-transition-duration: 250ms;
+  --default-transition-timing-function: var(--ease-standard);
+
+  --animate-*: initial;
+  --animate-fade-up: fade-up 700ms var(--ease-emphasized) both;
+  --animate-float: float 9s var(--ease-in-out) infinite;
+  --animate-float-slow: float 14s var(--ease-in-out) infinite;
+  --animate-drift: drift 40s linear infinite;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(1.25rem);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-0.6rem);
+    }
+  }
+  @keyframes drift {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
