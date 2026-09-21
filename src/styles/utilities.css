@@ -1,0 +1,137 @@
+/*
+ * UTILITIES: named building blocks made from tokens.
+ * Components use these instead of combining raw font-size, weight and spacing classes,
+ * so a heading is styled in exactly one place.
+ */
+
+/* ---- Typography: semantic styles (size, weight, line height, tracking together) ---- */
+@utility type-display {
+  font-family: var(--font-sans);
+  font-size: var(--text-6xl);
+  line-height: var(--text-6xl--line-height);
+  letter-spacing: var(--text-6xl--letter-spacing);
+  font-weight: var(--font-weight-semibold);
+  text-wrap: balance;
+}
+@utility type-h1 {
+  font-family: var(--font-sans);
+  font-size: var(--text-5xl);
+  line-height: var(--text-5xl--line-height);
+  letter-spacing: var(--text-5xl--letter-spacing);
+  font-weight: var(--font-weight-semibold);
+  text-wrap: balance;
+}
+@utility type-h2 {
+  font-family: var(--font-sans);
+  font-size: var(--text-4xl);
+  line-height: var(--text-4xl--line-height);
+  letter-spacing: var(--text-4xl--letter-spacing);
+  font-weight: var(--font-weight-semibold);
+  text-wrap: balance;
+}
+@utility type-h3 {
+  font-family: var(--font-sans);
+  font-size: var(--text-2xl);
+  line-height: var(--text-2xl--line-height);
+  letter-spacing: var(--text-2xl--letter-spacing);
+  font-weight: var(--font-weight-semibold);
+  text-wrap: balance;
+}
+@utility type-h4 {
+  font-family: var(--font-sans);
+  font-size: var(--text-xl);
+  line-height: var(--text-xl--line-height);
+  font-weight: var(--font-weight-semibold);
+}
+@utility type-lead {
+  font-size: var(--text-lg);
+  line-height: var(--text-lg--line-height);
+  color: var(--fg-muted);
+  text-wrap: pretty;
+}
+@utility type-body {
+  font-size: var(--text-base);
+  line-height: var(--text-base--line-height);
+  text-wrap: pretty;
+}
+@utility type-small {
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+}
+@utility type-caption {
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+}
+@utility type-label {
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+  font-weight: var(--font-weight-semibold);
+}
+@utility type-label-lg {
+  font-size: var(--text-base);
+  line-height: var(--text-base--line-height);
+  font-weight: var(--font-weight-semibold);
+}
+/* Small uppercase mono label above a heading. */
+@utility type-eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+/* Numbers: scores, draw balls, prices. Fixed-width digits so they line up. */
+@utility type-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--font-weight-medium);
+}
+/* An emphasised word inside a heading: italic serif, in the readable accent colour. */
+@utility type-serif {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: var(--font-weight-regular);
+  letter-spacing: -0.01em;
+}
+
+/* ---- Layout ---- */
+@utility container-page {
+  width: 100%;
+  max-width: calc(var(--container-page) + 2 * var(--spacing-gutter));
+  margin-inline: auto;
+  padding-inline: var(--spacing-gutter);
+}
+@utility container-content {
+  width: 100%;
+  max-width: calc(var(--container-content) + 2 * var(--spacing-gutter));
+  margin-inline: auto;
+  padding-inline: var(--spacing-gutter);
+}
+@utility section-y {
+  padding-block: var(--spacing-section);
+}
+@utility scroll-mt-header {
+  scroll-margin-top: var(--spacing-header);
+}
+
+/* ---- Motion durations and stacking (values live in tokens.css) ---- */
+@utility motion-fast {
+  transition-duration: var(--duration-fast);
+}
+@utility motion-base {
+  transition-duration: var(--duration-base);
+}
+@utility motion-slow {
+  transition-duration: var(--duration-slow);
+}
+@utility z-raised {
+  z-index: var(--z-raised);
+}
+@utility z-header {
+  z-index: var(--z-header);
+}
+@utility z-overlay {
+  z-index: var(--z-overlay);
+}

@@ -1,0 +1,21 @@
+/*
+ * MOTION: scroll-reveal.
+ * Elements marked data-reveal start hidden and fade up when they scroll into view (see components/ui/reveal.tsx).
+ * Only applies when scripting is on and the user has not asked for reduced motion, so content is never hidden
+ * for anyone who cannot see the animation.
+ */
+@layer components {
+  @media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+    [data-reveal] {
+      opacity: 0;
+      transform: translateY(var(--reveal-distance));
+      transition:
+        opacity var(--duration-slow) var(--ease-emphasized) var(--reveal-delay, 0ms),
+        transform var(--duration-slower) var(--ease-emphasized) var(--reveal-delay, 0ms);
+    }
+    [data-reveal][data-revealed='true'] {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
