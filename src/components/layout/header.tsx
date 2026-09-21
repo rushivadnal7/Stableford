@@ -8,9 +8,9 @@ import { MobileNav } from './mobile-nav';
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-header border-b border-line bg-canvas/85 backdrop-blur-lg">
-      <div className="container-page flex h-header items-center justify-between gap-6">
-        <Link href={ROUTES.home} aria-label={`${SITE.name}, home`}>
+    <header className="sticky top-0 z-header border-b border-line bg-canvas/85 pt-safe backdrop-blur-lg">
+      <div className="container-page flex h-header items-center justify-between gap-3 lg:gap-6">
+        <Link href={ROUTES.home} aria-label={`${SITE.name}, home`} className="flex min-h-touch items-center">
           <Wordmark />
         </Link>
 
@@ -30,7 +30,8 @@ export function Header() {
           <ButtonLink href={ROUTES.login} variant="ghost" size="sm" className="hidden sm:inline-flex">
             Sign in
           </ButtonLink>
-          <ButtonLink href={signupHref()} size="sm">
+          {/* On the narrowest phones the same button lives in the menu, so nothing is squeezed. */}
+          <ButtonLink href={signupHref()} size="sm" className="hidden xs:inline-flex">
             Subscribe
           </ButtonLink>
           <MobileNav />

@@ -1,6 +1,7 @@
 import { GraduationCap, Heart, HeartPulse, Leaf, Smile, Users, type LucideIcon } from 'lucide-react';
 import { ButtonLink } from '@/components/ui/button';
 import { RichTitle, SectionHeader } from '@/components/ui/heading';
+import { Grid } from '@/components/ui/layout';
 import { Reveal } from '@/components/ui/reveal';
 import { Section } from '@/components/ui/section';
 import { Badge, Card } from '@/components/ui/surface';
@@ -20,17 +21,20 @@ const DEFAULT_ART = { icon: Heart, tint: 'bg-canvas-alt' };
 
 export function Charities({ charities }: { charities: HomeCharity[] }) {
   return (
-    <Section id={ANCHORS.charities.slice(1)}>
-      <Reveal>
-        <SectionHeader eyebrow={CHARITIES.eyebrow} title={<RichTitle {...CHARITIES.title} />} lead={CHARITIES.lead} />
-      </Reveal>
-
-      <ul className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <Section
+      id={ANCHORS.charities.slice(1)}
+      header={
+        <Reveal>
+          <SectionHeader eyebrow={CHARITIES.eyebrow} title={<RichTitle {...CHARITIES.title} />} lead={CHARITIES.lead} />
+        </Reveal>
+      }
+    >
+      <Grid as="ul" cols={3}>
         {charities.map((charity, i) => {
           const { icon: Icon, tint } = ART[charity.category] ?? DEFAULT_ART;
           return (
             <Reveal as="li" key={charity.id} delay={(i % 3) * 90} className="h-full">
-              <Card interactive className="flex h-full flex-col gap-5 p-4 md:p-4">
+              <Card interactive className="flex h-full flex-col gap-5 p-4">
                 <div className={`relative grid h-36 place-items-center rounded-lg ${tint}`}>
                   <Icon className="size-10 text-action" aria-hidden />
                   {charity.is_featured && (
@@ -48,9 +52,9 @@ export function Charities({ charities }: { charities: HomeCharity[] }) {
             </Reveal>
           );
         })}
-      </ul>
+      </Grid>
 
-      <Reveal className="mt-12 flex justify-center">
+      <Reveal className="mt-block flex justify-center">
         <ButtonLink href={ROUTES.charities} variant="secondary" size="lg" arrow>
           {CHARITIES.browse}
         </ButtonLink>

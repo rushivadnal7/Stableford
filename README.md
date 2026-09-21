@@ -49,8 +49,9 @@ Sign in through Supabase Auth to get an access token, then call the API (see [AP
 |---|---|
 | `npm run dev` / `build` / `start` | Next.js |
 | `npm run lint` / `typecheck` | ESLint / TypeScript |
-| `npm test` | 101 unit tests, no services needed: business rules, prize maths, and the theme (contrast and design-token guards) |
+| `npm test` | 105 unit tests, no services needed: business rules, prize maths, and the theme (contrast, design-token and mobile-first guards) |
 | `npm run test:integration` | 119 tests against the local Supabase stack: schema rules, RLS, the draw engine, the whole API and a full lifecycle |
+| `npm run test:responsive` | After `npm run build`: real Chrome at nine screen widths; fails on sideways scroll, overflow, small tap targets or tiny text |
 | `npm run db:start` / `db:stop` / `db:reset` | Local Supabase; `db:reset` re-applies migrations and seed data |
 | `npm run seed:demo` | Demo accounts. Add `-- --allow-remote` to seed a hosted project |
 

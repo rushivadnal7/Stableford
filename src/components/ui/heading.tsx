@@ -67,7 +67,7 @@ export function SectionHeader({
   className?: string;
 }) {
   return (
-    <header className={cn('flex flex-col gap-4', align === 'center' && 'mx-auto items-center text-center', className)}>
+    <header className={cn('flex flex-col gap-4', align === 'center' && 'items-center text-center', className)}>
       <Eyebrow>{eyebrow}</Eyebrow>
       <Heading as="h2" className="max-w-narrow">
         {title}

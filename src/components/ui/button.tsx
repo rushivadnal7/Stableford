@@ -19,7 +19,8 @@ export const buttonStyles = cva(
         ghost: 'text-fg hover:bg-fg/8',
       },
       size: {
-        sm: 'h-10 px-4 type-label',
+        // Every size is at least 44px tall (h-touch), the minimum for something you tap.
+        sm: 'h-touch px-4 type-label',
         md: 'h-12 px-6 type-label',
         lg: 'h-14 px-8 type-label-lg',
       },

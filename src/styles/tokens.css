@@ -100,14 +100,34 @@
   --spacing-inset: clamp(0.5rem, 0.2rem + 1.2vw, 1.25rem); /* margin around full-width panels */
   --spacing-header: 4.5rem; /* height of the site header */
 
+  /*
+   * Rhythm tokens. All fluid, so spacing grows smoothly with the screen and never needs a per-breakpoint
+   * override. Use these names (mt-block, gap-grid, gap-split, p-card, py-panel) instead of picking numbers.
+   */
+  --spacing-block: clamp(2.5rem, 1.75rem + 3vw, 4rem); /* section header -> its content */
+  --spacing-grid: clamp(1rem, 0.75rem + 1vw, 1.5rem); /* gap between cards in a grid */
+  --spacing-split: clamp(2.5rem, 1.5rem + 4vw, 5rem); /* gap between the columns of a two-column layout */
+  --spacing-card: clamp(1.25rem, 1rem + 1.2vw, 2rem); /* padding inside a card */
+  --spacing-panel: clamp(2.5rem, 1.25rem + 5vw, 6rem); /* vertical padding inside a full-width panel */
+  --spacing-touch: 2.75rem; /* 44px: the minimum size of anything you tap */
+
   /* Widths for max-w-*. */
   --container-*: initial;
   --container-copy: 38rem; /* comfortable reading width */
   --container-narrow: 48rem;
   --container-content: 64rem;
   --container-page: 76rem;
+  --container-wide: 96rem; /* cap for full-width panels on very large screens */
 
+  /*
+   * Breakpoints. The site is MOBILE FIRST: write the phone layout with no prefix, then add sm: md: lg: to
+   * enlarge it (min-width only; max-* variants are banned by theme.test.ts). Change LAYOUT at breakpoints
+   * (columns, what is visible); sizes and spacing already scale fluidly.
+   *   xs 400px: larger phones      sm 640px: big phones, small tablets   md 768px: tablets
+   *   lg 1024px: laptops           xl 1280px: desktops                   2xl 1536px: large screens
+   */
   --breakpoint-*: initial;
+  --breakpoint-xs: 25rem;
   --breakpoint-sm: 40rem;
   --breakpoint-md: 48rem;
   --breakpoint-lg: 64rem;

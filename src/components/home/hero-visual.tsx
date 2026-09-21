@@ -1,4 +1,5 @@
 import { Ball } from '@/components/ui/ball';
+import { Grid, Stack } from '@/components/ui/layout';
 import { Badge, Card } from '@/components/ui/surface';
 import { matchesOf, SAMPLE } from '@/content/home';
 
@@ -10,8 +11,8 @@ export function HeroVisual() {
   const hits = matchesOf(SAMPLE.scores, SAMPLE.drawn);
 
   return (
-    <div aria-hidden="true" className="relative mx-auto grid max-w-md gap-4 sm:max-w-lg lg:max-w-none">
-      <Card variant="glass" className="animate-float p-5 md:p-6">
+    <Stack gap="md" aria-hidden="true" className="mx-auto max-w-md sm:max-w-lg lg:max-w-none">
+      <Card variant="glass" className="animate-float">
         <div className="flex items-center justify-between gap-3">
           <p className="type-small text-fg-muted">Your latest five scores</p>
           <Badge variant="glass">Sample</Badge>
@@ -20,7 +21,7 @@ export function HeroVisual() {
           {SAMPLE.scores.map((score, i) => (
             <li
               key={`${score}-${i}`}
-              className="type-num flex h-12 flex-1 items-center justify-center rounded-lg border border-glass-line bg-glass text-lg"
+              className="type-num flex h-12 min-w-0 flex-1 items-center justify-center rounded-lg border border-glass-line bg-glass text-base xs:text-lg"
             >
               {score}
             </li>
@@ -29,8 +30,8 @@ export function HeroVisual() {
         <p className="type-caption mt-3 text-fg-muted">Newest first · Stableford points</p>
       </Card>
 
-      <div className="grid gap-4 sm:grid-cols-5">
-        <Card variant="glass" className="animate-float-slow p-5 sm:col-span-3 md:p-6">
+      <Grid cols={2}>
+        <Card variant="glass" className="animate-float-slow">
           <p className="type-small text-fg-muted">This month&rsquo;s draw</p>
           <ol className="mt-4 flex flex-wrap gap-2">
             {SAMPLE.drawn.map((n) => (
@@ -44,7 +45,7 @@ export function HeroVisual() {
           </p>
         </Card>
 
-        <Card variant="glass" className="animate-float p-5 sm:col-span-2 sm:mt-8 md:p-6">
+        <Card variant="glass" className="animate-float">
           <div className="relative size-20">
             <svg viewBox="0 0 36 36" className="size-20 -rotate-90">
               <circle cx="18" cy="18" r="16" fill="none" strokeWidth="3.5" className="stroke-glass-line" />
@@ -64,7 +65,7 @@ export function HeroVisual() {
           </div>
           <p className="type-caption mt-3 text-fg-muted">of each payment goes to the charity you choose</p>
         </Card>
-      </div>
-    </div>
+      </Grid>
+    </Stack>
   );
 }

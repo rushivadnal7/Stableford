@@ -49,3 +49,33 @@ Components then use only names from `theme.css` and `utilities.css`:
 6. Variants live with the component (`cva` in `components/ui`), not in pages.
 
 `theme.test.ts` enforces 1 to 3 and checks WCAG contrast for every role pair in both themes.
+
+## Responsive: mobile first
+
+Write the phone layout first, then add `sm:`, `md:`, `lg:` only to *enlarge*. Never `max-*:` and never a
+`@media (max-width)`; a test fails if one appears.
+
+| Breakpoint | Width | Typical change |
+|---|---|---|
+| (none) | 0 and up | The base layout: one column, stacked |
+| `xs` | 400px | Room for a second button beside the first |
+| `sm` | 640px | Two columns for small cards |
+| `md` | 768px | Tablet: two columns for content, desktop nav starts to fit |
+| `lg` | 1024px | Laptop: full split layouts, desktop nav |
+| `xl` / `2xl` | 1280px / 1536px | Wider gutters; the content stops growing at `--container-page` |
+
+Consistency comes from a small set of pieces. Reach for these before writing any margin or grid by hand:
+
+- **Layout primitives** in `components/ui/layout.tsx`: `Stack` (vertical rhythm), `Cluster` (wrapping row),
+  `Grid` (`cols` 1 to 4) and `Split` (two columns at `lg`, with a `ratio`). They are the only files allowed to contain
+  `grid-cols-*` or `col-span-*`, so every page collapses the same way.
+- **`Section` and `Panel`** in `components/ui/section.tsx`: the page rhythm, gutter and header spacing.
+- **Fluid spacing tokens** (`--spacing-gutter`, `section`, `inset`, `block`, `grid`, `split`, `card`, `panel`): each is a
+  `clamp()`, so spacing scales smoothly with the screen and never needs a breakpoint.
+- **Fluid type**: every `type-*` style is a `clamp()` too, so headings shrink on a phone without a media query.
+- **Tap targets**: anything you tap is at least `h-touch` (`--spacing-touch`, 44px). Links inside a sentence are exempt.
+
+`npm run build && npm run test:responsive` opens the production site in real Chrome at nine widths (320 to 1920) and
+fails on sideways scrolling, elements sticking out of the screen, tap targets under 44px, text under 12px and
+headings that overflow. It writes a full-page screenshot per width to `tests/responsive/out/` for a quick look.
+`node tests/responsive/check.mjs --selftest` proves the checks can fail by auditing a deliberately broken page.

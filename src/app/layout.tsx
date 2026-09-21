@@ -11,7 +11,9 @@ export const metadata: Metadata = {
   openGraph: { title: `${SITE.name}: ${SITE.tagline}`, description: SITE.description, siteName: SITE.name, type: 'website' },
 };
 
-export const viewport: Viewport = { themeColor: THEME_COLOR };
+// viewport-fit=cover lets the page use the full screen on notched phones; the pt-safe / pb-safe utilities
+// keep content clear of the notch and home indicator.
+export const viewport: Viewport = { themeColor: THEME_COLOR, viewportFit: 'cover' };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
