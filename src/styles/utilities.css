@@ -120,6 +120,13 @@
 @utility section-y {
   padding-block: var(--spacing-section);
 }
+/* Keep content clear of phone notches and home indicators (viewport-fit=cover is set in the root layout). */
+@utility pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
 
 /* ---- Entrance stagger: stagger-2 starts two --stagger steps after stagger-0 ---- */
 @utility stagger-1 {

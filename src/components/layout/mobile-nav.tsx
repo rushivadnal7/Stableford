@@ -3,8 +3,9 @@
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 import { useEffect, useId, useState } from 'react';
+import { ButtonLink } from '@/components/ui/button';
 import { NAV } from '@/content/home';
-import { ROUTES } from '@/lib/routes';
+import { ROUTES, signupHref } from '@/lib/routes';
 
 /** The menu for screens below the desktop breakpoint. */
 export function MobileNav() {
@@ -26,7 +27,7 @@ export function MobileNav() {
         aria-controls={panelId}
         aria-label={open ? 'Close menu' : 'Open menu'}
         onClick={() => setOpen((value) => !value)}
-        className="grid size-10 place-items-center rounded-pill text-fg transition-colors hover:bg-fg/8"
+        className="grid size-touch place-items-center rounded-pill text-fg transition-colors hover:bg-fg/8"
       >
         {open ? <X className="size-5" aria-hidden /> : <Menu className="size-5" aria-hidden />}
       </button>
@@ -39,16 +40,19 @@ export function MobileNav() {
                 <Link
                   href={`${ROUTES.home}${link.href}`}
                   onClick={() => setOpen(false)}
-                  className="type-h4 block border-b border-line py-4 text-fg last:border-b-0"
+                  className="type-h4 flex min-h-touch items-center border-b border-line py-4 text-fg"
                 >
                   {link.label}
                 </Link>
               </li>
             ))}
-            <li className="pt-3">
-              <Link href={ROUTES.login} onClick={() => setOpen(false)} className="type-label block py-3 text-fg-muted">
+            <li className="flex flex-wrap items-center gap-3 pt-4 pb-2">
+              <ButtonLink href={signupHref()} size="md" arrow onClick={() => setOpen(false)}>
+                Subscribe
+              </ButtonLink>
+              <ButtonLink href={ROUTES.login} size="md" variant="secondary" onClick={() => setOpen(false)}>
                 Sign in
-              </Link>
+              </ButtonLink>
             </li>
           </ul>
         </nav>

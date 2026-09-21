@@ -1,5 +1,6 @@
 import { Heart, PencilLine, Sparkles, Trophy } from 'lucide-react';
 import { RichTitle, SectionHeader } from '@/components/ui/heading';
+import { Grid } from '@/components/ui/layout';
 import { Reveal } from '@/components/ui/reveal';
 import { Section } from '@/components/ui/section';
 import { Card } from '@/components/ui/surface';
@@ -10,12 +11,15 @@ const ICONS = { heart: Heart, pencil: PencilLine, sparkles: Sparkles, trophy: Tr
 
 export function HowItWorks() {
   return (
-    <Section id={ANCHORS.how.slice(1)}>
-      <Reveal>
-        <SectionHeader eyebrow={HOW.eyebrow} title={<RichTitle {...HOW.title} />} lead={HOW.lead} />
-      </Reveal>
-
-      <ol className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <Section
+      id={ANCHORS.how.slice(1)}
+      header={
+        <Reveal>
+          <SectionHeader eyebrow={HOW.eyebrow} title={<RichTitle {...HOW.title} />} lead={HOW.lead} />
+        </Reveal>
+      }
+    >
+      <Grid as="ol" cols={4}>
         {STEPS.map((step, i) => {
           const Icon = ICONS[step.icon];
           return (
@@ -33,7 +37,7 @@ export function HowItWorks() {
             </Reveal>
           );
         })}
-      </ol>
+      </Grid>
     </Section>
   );
 }

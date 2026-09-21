@@ -102,3 +102,37 @@ describe('components use tokens, not raw values', () => {
     expect(offenders(/var\(--palette-/g)).toEqual([]);
   });
 });
+
+/** The site is mobile first. These rules keep every page and section built the same way. */
+describe('responsive rules', () => {
+  const files = sourceFiles(['src/components', 'src/app']).map((file) => ({ file, text: read(file) }));
+  const offenders = (pattern: RegExp, skip: (file: string) => boolean = () => false) =>
+    files.filter((f) => !skip(f.file)).flatMap(({ file, text }) => [...text.matchAll(pattern)].map((m) => `${file}: ${m[0]}`));
+
+  it('writes the phone layout first and only enlarges: no max-* variants, arbitrary breakpoints or media queries', () => {
+    expect(offenders(/\bmax-(?:xs|sm|md|lg|xl|2xl):/g)).toEqual([]);
+    expect(offenders(/\b(?:min|max)-\[[^\]]+\]:/g)).toEqual([]);
+    expect(offenders(/@media[^{]*(?:max-width|min-width)/g)).toEqual([]);
+  });
+
+  it('keeps responsive columns inside the layout primitives (Stack, Cluster, Grid, Split)', () => {
+    const inLayout = (file: string) => file === 'src/components/ui/layout.tsx';
+    expect(offenders(/\b(?:(?:xs|sm|md|lg|xl|2xl):)?(?:grid-cols|col-span|grid-rows)-\S+/g, inLayout)).toEqual([]);
+  });
+
+  it('defines breakpoints in rem, in ascending order', () => {
+    const tokens = read('src/styles/tokens.css');
+    const found = [...tokens.matchAll(/--breakpoint-(\w+):\s*([\d.]+)rem;/g)].map((m) => [m[1]!, Number(m[2])] as const);
+    expect(found.map(([name]) => name)).toEqual(['xs', 'sm', 'md', 'lg', 'xl', '2xl']);
+    const widths = found.map(([, rem]) => rem);
+    expect(widths).toEqual([...widths].sort((a, b) => a - b));
+  });
+
+  it('has the fluid rhythm tokens that layouts depend on', () => {
+    const tokens = read('src/styles/tokens.css');
+    for (const name of ['gutter', 'section', 'inset', 'block', 'grid', 'split', 'card', 'panel', 'touch']) {
+      expect(tokens, `missing --spacing-${name}`).toMatch(new RegExp(`--spacing-${name}:`));
+    }
+    expect(tokens).toMatch(/--spacing-touch:\s*2\.75rem/); // 44px minimum tap size
+  });
+});

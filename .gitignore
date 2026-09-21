@@ -20,3 +20,6 @@ next-env.d.ts
 # OS
 .DS_Store
 Thumbs.db
+
+# Screenshots from the responsive check
+tests/responsive/out/

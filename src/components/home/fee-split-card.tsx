@@ -23,7 +23,7 @@ export function FeeSplitCard({ priceCents, planName, interval }: { priceCents: n
   ];
 
   return (
-    <Card className="flex flex-col gap-8 md:p-10">
+    <Card className="flex flex-col gap-8">
       <div>
         <p className="type-eyebrow">On the {planName.toLowerCase()} plan</p>
         <p className="mt-2 flex items-baseline gap-2">
@@ -59,7 +59,7 @@ export function FeeSplitCard({ priceCents, planName, interval }: { priceCents: n
           step={1}
           value={percent}
           onChange={(event) => setPercent(Number(event.target.value))}
-          className="mt-4 h-2 w-full cursor-pointer accent-action"
+          className="mt-2 h-touch w-full cursor-pointer accent-action"
         />
         <div className="type-num mt-1 flex justify-between text-xs text-fg-muted">
           <span>{minPercent}%</span>
