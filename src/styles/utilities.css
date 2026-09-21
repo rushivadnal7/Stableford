@@ -88,6 +88,14 @@
   font-variant-numeric: tabular-nums;
   font-weight: var(--font-weight-medium);
 }
+/* A big number: prices and prize shares. Serif numerals, tight. */
+@utility type-stat {
+  font-family: var(--font-display);
+  font-size: var(--text-5xl);
+  line-height: var(--text-5xl--line-height);
+  letter-spacing: var(--text-5xl--letter-spacing);
+  font-weight: var(--font-weight-regular);
+}
 /* An emphasised word inside a heading: italic serif, in the readable accent colour. */
 @utility type-serif {
   font-family: var(--font-display);
@@ -112,8 +120,25 @@
 @utility section-y {
   padding-block: var(--spacing-section);
 }
-@utility scroll-mt-header {
-  scroll-margin-top: var(--spacing-header);
+
+/* ---- Entrance stagger: stagger-2 starts two --stagger steps after stagger-0 ---- */
+@utility stagger-1 {
+  animation-delay: calc(var(--stagger) * 1);
+}
+@utility stagger-2 {
+  animation-delay: calc(var(--stagger) * 2);
+}
+@utility stagger-3 {
+  animation-delay: calc(var(--stagger) * 3);
+}
+@utility stagger-4 {
+  animation-delay: calc(var(--stagger) * 4);
+}
+@utility stagger-5 {
+  animation-delay: calc(var(--stagger) * 5);
+}
+@utility stagger-6 {
+  animation-delay: calc(var(--stagger) * 6);
 }
 
 /* ---- Motion durations and stacking (values live in tokens.css) ---- */

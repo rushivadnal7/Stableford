@@ -41,6 +41,17 @@ export function Accent({ children }: { children: ReactNode }) {
   return <em className="type-serif text-accent-text">{children}</em>;
 }
 
+/** Renders a { before, accent, after } title from src/content with the accent word in italic serif. */
+export function RichTitle({ before, accent, after }: { before: string; accent: string; after?: string }) {
+  return (
+    <>
+      {before}
+      <Accent>{accent}</Accent>
+      {after}
+    </>
+  );
+}
+
 /** Eyebrow, heading and lead, laid out the same way in every section. */
 export function SectionHeader({
   eyebrow,
@@ -61,7 +72,7 @@ export function SectionHeader({
       <Heading as="h2" className="max-w-narrow">
         {title}
       </Heading>
-      {lead && <p className="type-lead max-w-prose">{lead}</p>}
+      {lead && <p className="type-lead max-w-copy">{lead}</p>}
     </header>
   );
 }

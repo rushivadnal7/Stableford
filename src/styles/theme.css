@@ -31,6 +31,7 @@
   --accent: var(--palette-lime); /* decoration only: fills, dots, underlines */
   --accent-text: color-mix(in oklab, var(--palette-sand) 52%, var(--palette-bokara)); /* accent you can read */
   --warm: var(--palette-sand); /* decoration only */
+  --on-accent: var(--palette-bokara); /* text on an --accent or --warm fill */
   --ring: var(--palette-hunter);
 
   --success: var(--palette-hunter);
@@ -60,6 +61,7 @@
   --accent: var(--palette-lime);
   --accent-text: color-mix(in oklab, var(--palette-lime) 65%, var(--palette-bright));
   --warm: var(--palette-sand);
+  --on-accent: var(--palette-bokara);
   --ring: var(--palette-lime);
 
   --success: color-mix(in oklab, var(--palette-lime) 65%, var(--palette-bright));
@@ -87,6 +89,7 @@
   --color-accent: var(--accent);
   --color-accent-text: var(--accent-text);
   --color-warm: var(--warm);
+  --color-on-accent: var(--on-accent);
   --color-ring: var(--ring);
   --color-success: var(--success);
   --color-danger: var(--danger);

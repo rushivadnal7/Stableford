@@ -3,8 +3,12 @@
 import { useEffect, useRef, type CSSProperties, type ElementType, type ReactNode } from 'react';
 
 /**
- * Fades its content up the first time it scrolls into view. The animation itself lives in
- * styles/motion.css (and switches itself off for reduced-motion users); this only flips the flag.
+ * Fades its content up when it first scrolls into view. The animation lives in styles/motion.css;
+ * this only flips a data attribute.
+ *
+ * It never hides anything up front: the server-rendered page is fully visible. Only after the page
+ * has loaded are elements that are still below the fold set to "pending", and revealed as they come
+ * into view. So without JavaScript, with reduced motion, in print, or for a crawler, nothing is hidden.
  * `delay` staggers siblings, in milliseconds.
  */
 export function Reveal({
@@ -22,22 +26,25 @@ export function Reveal({
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (el.getBoundingClientRect().top < window.innerHeight * 0.9) return; // already on screen: leave it be
+
+    el.dataset.reveal = 'pending';
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry?.isIntersecting) {
-          el.dataset.revealed = 'true';
+          el.dataset.reveal = 'shown';
           observer.disconnect();
         }
       },
-      { rootMargin: '0px 0px -8% 0px', threshold: 0.1 },
+      { rootMargin: '0px 0px -8% 0px' },
     );
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
 
   return (
-    <Tag ref={ref} data-reveal="" style={{ '--reveal-delay': `${delay}ms` } as CSSProperties} className={className}>
+    <Tag ref={ref} style={{ '--reveal-delay': `${delay}ms` } as CSSProperties} className={className}>
       {children}
     </Tag>
   );
