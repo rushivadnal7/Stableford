@@ -21,6 +21,10 @@ next-env.d.ts
 .DS_Store
 Thumbs.db
 
+# The user's own working file, kept local only (an editor/IDE auto-commit swept it in once before;
+# this stops that from happening again).
+Stableford.drawio
+
 # Screenshots from the responsive check
 tests/responsive/out/
 
