@@ -24,12 +24,12 @@ export function HowItWorks() {
           const Icon = ICONS[step.icon];
           return (
             <Reveal as="li" key={step.title} delay={i * 90} className="h-full">
-              <Card interactive className="flex h-full flex-col gap-5">
+              <Card interactive className="group flex h-full flex-col gap-5">
                 <div className="flex items-center justify-between">
-                  <span className="grid size-12 place-items-center rounded-pill bg-canvas-alt text-action">
+                  <span className="grid size-12 place-items-center rounded-pill bg-canvas-alt transition-[background-color,transform] motion-slow group-hover:scale-110 group-hover:bg-accent/25 text-action">
                     <Icon className="size-5" aria-hidden />
                   </span>
-                  <span className="type-num text-sm text-fg-muted">0{i + 1}</span>
+                  <span className="type-num text-sm text-fg-muted transition-colors motion-base group-hover:text-accent-text">0{i + 1}</span>
                 </div>
                 <h3 className="type-h3 text-fg">{step.title}</h3>
                 <p className="type-body text-fg-muted">{step.text}</p>

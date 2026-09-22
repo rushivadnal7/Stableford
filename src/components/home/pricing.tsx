@@ -68,14 +68,17 @@ export function Pricing({ plans }: { plans: HomePlan[] }) {
       <Grid cols={2} className="mx-auto max-w-content">
         {monthly && (
           <Reveal>
-            <Card className="h-full">
+            <Card className="h-full transition-[border-color,box-shadow] motion-slow hover:border-line-strong hover:shadow-lift">
               <PlanBody plan={monthly} />
             </Card>
           </Reveal>
         )}
         {yearly && (
           <Reveal delay={120}>
-            <div data-theme="dark" className="h-full rounded-xl bg-canvas p-card text-fg shadow-lift">
+            <div
+              data-theme="dark"
+              className="h-full rounded-xl bg-canvas p-card text-fg shadow-lift ring-1 ring-transparent transition-shadow motion-slow hover:ring-accent/50"
+            >
               <PlanBody plan={yearly} saving={saving} footnote={free > 0 ? `About ${free} months free compared with paying monthly.` : undefined} />
             </div>
           </Reveal>

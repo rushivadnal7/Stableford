@@ -27,7 +27,7 @@ export function MobileNav() {
         aria-controls={panelId}
         aria-label={open ? 'Close menu' : 'Open menu'}
         onClick={() => setOpen((value) => !value)}
-        className="grid size-touch place-items-center rounded-pill text-fg transition-colors hover:bg-fg/8"
+        className="grid size-touch place-items-center rounded-pill text-fg transition-[background-color,transform] motion-fast hover:bg-fg/8 active:scale-90"
       >
         {open ? <X className="size-5" aria-hidden /> : <Menu className="size-5" aria-hidden />}
       </button>
@@ -40,7 +40,7 @@ export function MobileNav() {
                 <Link
                   href={`${ROUTES.home}${link.href}`}
                   onClick={() => setOpen(false)}
-                  className="type-h4 flex min-h-touch items-center border-b border-line py-4 text-fg"
+                  className="type-h4 flex min-h-touch items-center border-b border-line py-4 text-fg transition-[color,transform] motion-base hover:translate-x-1 hover:text-accent-text active:bg-fg/5"
                 >
                   {link.label}
                 </Link>

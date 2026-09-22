@@ -34,9 +34,9 @@ export function Charities({ charities }: { charities: HomeCharity[] }) {
           const { icon: Icon, tint } = ART[charity.category] ?? DEFAULT_ART;
           return (
             <Reveal as="li" key={charity.id} delay={(i % 3) * 90} className="h-full">
-              <Card interactive className="flex h-full flex-col gap-5 p-4">
-                <div className={`relative grid h-36 place-items-center rounded-lg ${tint}`}>
-                  <Icon className="size-10 text-action" aria-hidden />
+              <Card interactive className="group flex h-full flex-col gap-5 p-4">
+                <div className={`relative grid h-36 place-items-center overflow-hidden rounded-lg ${tint}`}>
+                  <Icon className="size-10 text-action transition-transform motion-slow group-hover:scale-110" aria-hidden />
                   {charity.is_featured && (
                     <Badge variant="accent" className="absolute top-3 left-3 bg-canvas">
                       Featured
@@ -45,7 +45,7 @@ export function Charities({ charities }: { charities: HomeCharity[] }) {
                 </div>
                 <div className="flex flex-1 flex-col gap-3 px-2 pb-2">
                   <Badge className="self-start capitalize">{charity.category}</Badge>
-                  <h3 className="type-h3 text-fg">{charity.name}</h3>
+                  <h3 className="type-h3 text-fg transition-colors motion-base group-hover:text-accent-text">{charity.name}</h3>
                   <p className="type-body text-fg-muted">{charity.summary}</p>
                 </div>
               </Card>
