@@ -30,7 +30,9 @@ async function ensureCustomer(ctx: AuthContext, client: Stripe): Promise<string>
 
 const redirects = () => {
   const base = appEnv().APP_URL;
-  return { success_url: `${base}/dashboard?checkout=success`, cancel_url: `${base}/pricing?checkout=cancelled` };
+  // A cancelled checkout goes back to signup (where the plan and charity choice are still on
+  // screen) rather than the dashboard, which they may not have access to yet.
+  return { success_url: `${base}/dashboard?checkout=success`, cancel_url: `${base}/signup?checkout=cancelled` };
 };
 
 function requireUrl(session: Stripe.Checkout.Session): { url: string } {
