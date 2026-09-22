@@ -33,6 +33,23 @@ export const HERO = {
   assurances: ['Monthly or yearly plans', 'Cancel any time', 'Secure payments with Stripe'],
 };
 
+/** The scroll story in the hero: a still for the picture, and one caption per camera shot. */
+export const STORY = {
+  label: 'The story of a round',
+  scroll: 'Scroll',
+  poster: {
+    alt: 'A bronze golfer holds a finish pose on a putting green while a ball arcs away toward the flag.',
+    wide: '/models/poster-wide.webp',
+    tall: '/models/poster-tall.webp',
+  },
+  chapters: [
+    { kicker: '01', title: 'You play.', text: 'Every round you finish becomes a Stableford score, from 1 to 45.' },
+    { kicker: '02', title: 'Your five count.', text: 'Your latest five scores are your entry into the monthly draw.' },
+    { kicker: '03', title: 'The draw rolls.', text: 'Five numbers are drawn every month. Match three, four or five and share the prize pool.' },
+    { kicker: '04', title: 'And it gives back.', text: 'A share of every subscription goes to the charity you chose.' },
+  ],
+};
+
 /** One example used by the hero preview and the prizes section, so they always agree. */
 export const SAMPLE = {
   scores: [31, 12, 35, 27, 18],

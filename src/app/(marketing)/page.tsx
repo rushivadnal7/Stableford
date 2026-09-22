@@ -1,8 +1,8 @@
+import { Hero } from '@/components/hero/hero';
 import { Charities } from '@/components/home/charities';
 import { Faq } from '@/components/home/faq';
 import { FeeSplitSection } from '@/components/home/fee-split-section';
 import { FinalCta } from '@/components/home/final-cta';
-import { Hero } from '@/components/home/hero';
 import { HowItWorks } from '@/components/home/how-it-works';
 import { Pricing } from '@/components/home/pricing';
 import { Prizes } from '@/components/home/prizes';

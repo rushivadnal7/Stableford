@@ -23,3 +23,8 @@ Thumbs.db
 
 # Screenshots from the responsive check
 tests/responsive/out/
+
+# Source 3D models (~10 MB, CC-licensed downloads): scripts/optimize-models.mjs turns them into the
+# small files the site ships, public/models/*.glb (committed). Credits are in CREDITS.md.
+assets/models-src/
+scripts/.poster-scratch/

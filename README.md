@@ -49,9 +49,11 @@ Sign in through Supabase Auth to get an access token, then call the API (see [AP
 |---|---|
 | `npm run dev` / `build` / `start` | Next.js |
 | `npm run lint` / `typecheck` | ESLint / TypeScript |
-| `npm test` | 105 unit tests, no services needed: business rules, prize maths, and the theme (contrast, design-token and mobile-first guards) |
+| `npm test` | 126 unit tests, no services needed: business rules, prize maths, the theme (contrast, design-token and mobile-first guards) and the hero's scroll choreography |
 | `npm run test:integration` | 119 tests against the local Supabase stack: schema rules, RLS, the draw engine, the whole API and a full lifecycle |
 | `npm run test:responsive` | After `npm run build`: real Chrome at nine screen widths; fails on sideways scroll, overflow, small tap targets or tiny text |
+| `npm run models:optimize` | Compresses the hero's source 3D models (`assets/models-src/`, not committed) into `public/models/` |
+| `npm run models:poster` | Renders the hero's still poster images from the same scene code the browser runs |
 | `npm run db:start` / `db:stop` / `db:reset` | Local Supabase; `db:reset` re-applies migrations and seed data |
 | `npm run seed:demo` | Demo accounts. Add `-- --allow-remote` to seed a hosted project |
 
@@ -108,6 +110,37 @@ See [src/styles/README.md](src/styles/README.md) for how to change a colour, a f
 The home page reads its plans and charities from the database (rebuilt every five minutes) and falls back to built-in
 content if the database is unreachable. All of its copy lives in `src/content/home.ts`.
 
+### The hero's 3D story
+
+The home page opens with a small scroll-driven scene: a bronze golfer statue, a golf bag, a cart and a scan of
+a putting green, staged as one continuous shot that plays out as you scroll. It is built to add nothing to the
+cost of the first paint:
+
+- **The page is complete without it.** `Hero` (a server component) renders the headline, the buttons and a
+  pre-rendered still (`public/models/poster-*.webp`) of the scene's opening frame. `<StoryLoader>` adds the
+  motion after the page has loaded and the browser is idle; the layout (the capsule mask, the pinned screen)
+  is plain CSS in `src/styles/hero.css`, so nothing shifts when it arrives (Cumulative Layout Shift stays 0).
+- **The heavy parts are lazy and small.** three.js, GSAP and the GLTF loader are dynamically imported and never
+  part of the first-load bundle. The four models are compressed by `scripts/optimize-models.mjs`
+  (`npm run models:optimize`) — meshopt geometry, WebP textures, decimated triangle counts — which shrinks
+  ~10 MB of source files to under 900 KB total; only the statue and the green load up front, the bag and cart
+  load once the scene is already visible and idle.
+- **One number drives everything.** `src/lib/scene/story.ts` is pure, tested maths: a `progress` value from 0
+  to 1 maps to a camera shot, where the ball and cart are, and which caption shows. `src/lib/scene/world.ts`
+  and `hero-scene.ts` turn that into a three.js scene; `hero-story.ts` reads scroll position from a GSAP
+  ScrollTrigger and applies it to both the DOM (clip-path, opacity, transform only — nothing that costs layout)
+  and the scene.
+- **It steps aside cleanly.** `prefers-reduced-motion`, no WebGL, a slow device (`navigator.deviceMemory`,
+  `hardwareConcurrency`, `connection.saveData`) or a load failure all fall back to the plain poster and a static
+  list of the same four captions — same content, no motion.
+- **Smooth scroll** (Lenis) and **scroll-driven animation** (GSAP ScrollTrigger) are shared across the page,
+  loaded the same lazy way, and also skipped under reduced motion or on touch screens (which keep native
+  momentum scrolling).
+
+Regenerate the models and posters after changing anything under `src/lib/scene/`:
+`npm run models:optimize && npm run models:poster`. Source models and their licences are in
+[CREDITS.md](CREDITS.md) — two of the four are non-commercial licences, noted there.
+
 ## Assumptions
 
 The PRD leaves some things open. These are the choices made, all adjustable:
@@ -144,13 +177,14 @@ Use a **new** Vercel account and a **new** Supabase project.
 src/app/api/     thin route handlers: validate, authorise, call a service
 src/app/(marketing)/  the public site (home page); more pages share its header and footer
 src/modules/     business logic by domain: scores, draws, billing, charities, winners, dashboard, admin, home
-src/components/  ui (design-system primitives), layout (header, footer), home (page sections)
+src/components/  ui (design-system primitives), layout (header, footer), hero (3D story), motion, home (page sections)
 src/content/     the words on the page, kept apart from the components
 src/styles/      design tokens, theme roles, named utilities (see its README)
-src/lib/         config, env, errors, auth, Supabase and Stripe clients, fonts, routes
+src/lib/         config, env, errors, auth, Supabase and Stripe clients, fonts, routes, scene (the 3D hero), motion
 supabase/        migrations (the schema is the source of truth) and seed data
-tests/           integration tests
-scripts/         demo data
+tests/           integration tests, and a real-browser responsive check
+scripts/         demo data, 3D model optimisation, poster rendering
+assets/          source 3D models before optimisation (not committed; see CREDITS.md)
 ```
 
 ## Branching

@@ -1,0 +1,295 @@
+/*
+ * HERO STORY: the scroll-driven opening of the home page.
+ *
+ * The layout is CSS only, so the server-rendered page is already correct and nothing moves when scripts arrive:
+ *   .hero-runway  a tall box; its height is the length of the story
+ *   .hero-pin     position: sticky inside the runway, so it stays on screen while you scroll through it
+ *   .hero-stage   the picture (a still poster, then the 3D canvas), cut to a capsule with clip-path
+ * lib/scene/hero-story.ts reads the scroll position and animates only clip-path, opacity and transform, and
+ * never anything that changes layout. That is what keeps Cumulative Layout Shift at zero.
+ *
+ * Phone: the headline sits above the runway in normal flow, and the picture pins as it reaches the top.
+ * Laptop and up: the headline pins beside the picture, and fades as the capsule opens.
+ * Reduced motion or no scripts: no runway; the poster and the four captions read as a normal page.
+ */
+@layer components {
+  .hero {
+    --toolbar-slack: calc(100lvh - 100svh); /* how much a phone's address bar can hide; 0 on desktop */
+    --hero-header: calc(var(--spacing-header) + env(safe-area-inset-top));
+    position: relative;
+    /* slide up under the sticky header so the first screen is the hero and nothing else */
+    margin-top: calc(-1 * var(--hero-header));
+  }
+
+  /* ---- Headline and calls to action ---- */
+  .hero-copy {
+    position: relative;
+    z-index: 2;
+    padding: calc(var(--hero-header) + var(--spacing-block) * 0.4) var(--spacing-gutter) var(--spacing-block);
+    will-change: opacity, transform;
+
+    &[data-gone='true'] {
+      visibility: hidden;
+    }
+  }
+  .hero-copy-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+    max-width: 44rem;
+  }
+
+  /* ---- The runway and its pinned screen ---- */
+  .hero-runway {
+    position: relative;
+    height: var(--hero-runway);
+  }
+  .hero-pin {
+    /* the capsule's window, as percentages of the screen (inset from the left, top, right, bottom) */
+    --cap-l: 9;
+    --cap-t: 4;
+    --cap-r: 9;
+    --cap-b: 5;
+    position: sticky;
+    top: 0;
+    height: 100lvh; /* lvh, not dvh: the size never changes while a phone's address bar moves */
+    overflow: hidden;
+  }
+  .hero-stage {
+    position: absolute;
+    inset: 0;
+    background-image: var(--background-image-sky);
+    /* the starting shape; hero-story.ts takes over from here. A huge radius rounds a rectangle into a capsule. */
+    clip-path: inset(calc(var(--cap-t) * 1%) calc(var(--cap-r) * 1%) calc(var(--cap-b) * 1%) calc(var(--cap-l) * 1%) round 9999px);
+    will-change: clip-path;
+  }
+  .hero-poster,
+  .hero-canvas-host,
+  .hero-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .hero-poster {
+    object-fit: cover;
+  }
+  .hero-canvas {
+    opacity: 0;
+    transition: opacity var(--duration-slow) var(--ease-standard);
+  }
+  /* once the first 3D frame is ready it fades in over the poster, which is then dropped */
+  [data-scene='live'] .hero-canvas {
+    opacity: 1;
+  }
+  [data-scene='live'] .hero-poster {
+    visibility: hidden;
+    transition: visibility 0s var(--duration-slow);
+  }
+
+  /* ---- Captions: one at a time, over the picture ---- */
+  .hero-chapters {
+    position: absolute;
+    inset-inline: var(--spacing-inset);
+    bottom: calc(var(--toolbar-slack) + var(--spacing-inset) + env(safe-area-inset-bottom));
+    height: 11rem;
+    pointer-events: none;
+    list-style: none;
+  }
+  .hero-chapter {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: var(--spacing-card);
+    border: 1px solid var(--glass-line);
+    border-radius: var(--radius-xl);
+    background: var(--glass);
+    backdrop-filter: blur(var(--blur-lg));
+    -webkit-backdrop-filter: blur(var(--blur-lg));
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+
+  /* progress rail: where you are in the story */
+  .hero-rail {
+    display: none;
+  }
+  .hero-hint {
+    position: absolute;
+    left: 50%;
+    bottom: calc(var(--toolbar-slack) + var(--spacing-inset) + env(safe-area-inset-bottom) + 0.25rem);
+    translate: -50% 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--fg-muted);
+    pointer-events: none;
+  }
+
+  /* ---- Laptop and up: headline beside the picture ---- */
+  .hero {
+    @variant lg {
+      display: grid;
+    }
+  }
+  .hero-runway {
+    @variant lg {
+      grid-area: 1 / 1;
+    }
+  }
+  .hero-copy {
+    @variant lg {
+      grid-area: 1 / 1;
+      position: sticky;
+      top: 0;
+      align-self: start;
+      display: flex;
+      align-items: center;
+      width: 58%;
+      height: 100lvh;
+      padding: var(--hero-header) 0 var(--spacing-block) max(var(--spacing-gutter), calc((100% - var(--container-page)) / 2));
+      pointer-events: none;
+    }
+  }
+  .hero-copy-inner {
+    @variant lg {
+      pointer-events: auto;
+    }
+  }
+  .hero-pin {
+    @variant lg {
+      --cap-l: 58;
+      --cap-t: 13;
+      --cap-r: 4;
+      --cap-b: 6;
+    }
+  }
+  .hero-chapters {
+    @variant lg {
+      inset-inline: max(var(--spacing-gutter), calc((100% - var(--container-page)) / 2));
+      height: 10rem;
+    }
+  }
+  .hero-chapter {
+    @variant lg {
+      inset-inline: 0 auto;
+      width: 26rem;
+    }
+  }
+  .hero-rail {
+    @variant lg {
+      position: absolute;
+      inset-block: 30% 30%;
+      right: max(var(--spacing-gutter), calc((100% - var(--container-page)) / 2));
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+  }
+  .hero-rail-track {
+    position: absolute;
+    inset-block: 0;
+    right: 0.4rem;
+    width: 1px;
+    background: var(--line-strong);
+  }
+  .hero-rail-fill {
+    position: absolute;
+    inset: 0;
+    background: var(--fg);
+    transform-origin: top;
+    transform: scaleY(0);
+  }
+  .hero-rail-tick {
+    position: relative;
+    padding-right: 1.5rem;
+    color: var(--fg-muted);
+    transition: color var(--duration-base) var(--ease-standard);
+
+    &::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 50%;
+      width: 0.85rem;
+      height: 0.85rem;
+      translate: 0.05rem -50%;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-pill);
+      background: var(--bg);
+      transition:
+        background-color var(--duration-base) var(--ease-standard),
+        border-color var(--duration-base) var(--ease-standard);
+    }
+    &[data-active='true'] {
+      color: var(--fg);
+    }
+    &[data-active='true']::after {
+      border-color: var(--fg);
+      background: var(--fg);
+    }
+  }
+
+  /* ---- No motion wanted (or no scripts): a normal page, no runway, no pinning ---- */
+  .hero-runway {
+    @variant motion-reduce {
+      height: auto;
+    }
+  }
+  .hero-pin {
+    @variant motion-reduce {
+      position: relative;
+      height: auto;
+      overflow: visible;
+      padding: 0 var(--spacing-inset) var(--spacing-inset);
+    }
+  }
+  .hero-stage {
+    @variant motion-reduce {
+      position: relative;
+      height: 72svh;
+      clip-path: none;
+      border-radius: var(--radius-3xl);
+      overflow: hidden;
+    }
+  }
+  .hero-chapters {
+    @variant motion-reduce {
+      position: static;
+      display: grid;
+      gap: var(--spacing-grid);
+      height: auto;
+      margin-top: var(--spacing-grid);
+      pointer-events: auto;
+    }
+  }
+  .hero-chapter {
+    @variant motion-reduce {
+      position: static;
+      opacity: 1;
+      width: auto;
+    }
+  }
+  .hero-copy {
+    @variant motion-reduce {
+      position: relative;
+      width: auto;
+      height: auto;
+      display: block;
+      padding-block: calc(var(--hero-header) + var(--spacing-block) * 0.4) var(--spacing-block);
+      pointer-events: auto;
+    }
+  }
+  .hero-hint,
+  .hero-rail {
+    @variant motion-reduce {
+      display: none;
+    }
+  }
+}
