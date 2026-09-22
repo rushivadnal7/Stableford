@@ -46,6 +46,17 @@ export function GivingPanel({
     }
   }
 
+  if (charities.length === 0) {
+    return (
+      <Card>
+        <Stack gap="md">
+          <h2 className="type-h4 text-fg">{T.title}</h2>
+          <p className="type-body text-fg-muted">{T.noneAvailable}</p>
+        </Stack>
+      </Card>
+    );
+  }
+
   return (
     <Card>
       <form onSubmit={onSubmit}>

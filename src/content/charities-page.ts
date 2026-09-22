@@ -7,6 +7,7 @@ export const CHARITIES_PAGE = {
   searchPlaceholder: 'Search charities…',
   allCategories: 'All categories',
   empty: 'No charities match that search.',
+  emptyAll: 'Charities are being added — check back soon.',
   cta: 'Subscribe and support this charity',
 } as const;
 

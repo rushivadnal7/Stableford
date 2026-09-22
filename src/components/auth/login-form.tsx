@@ -172,7 +172,7 @@ export function LoginForm({ next }: { next: string }) {
               </Stack>
             </form>
           )}
-          <button type="button" onClick={() => setMode('sign-in')} className="type-small self-start text-fg-muted underline underline-offset-4">
+          <button type="button" onClick={() => setMode('sign-in')} className="type-small inline-flex min-h-touch items-center self-start text-fg-muted underline underline-offset-4">
             {LOGIN.backToSignIn}
           </button>
         </Stack>
@@ -204,7 +204,7 @@ export function LoginForm({ next }: { next: string }) {
               setResetEmail(email);
               setMode('reset');
             }}
-            className="type-small self-start text-fg-muted underline underline-offset-4"
+            className="type-small inline-flex min-h-touch items-center self-start text-fg-muted underline underline-offset-4"
           >
             {LOGIN.forgot}
           </button>

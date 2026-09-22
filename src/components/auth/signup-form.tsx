@@ -4,7 +4,7 @@ import { Loader2 } from 'lucide-react';
 import { useId, useState, type FormEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Checkbox, Field, FormNotice, Select, TextInput } from '@/components/ui/field';
-import { Stack } from '@/components/ui/layout';
+import { Grid, Stack } from '@/components/ui/layout';
 import { Card } from '@/components/ui/surface';
 import { SIGNUP } from '@/content/auth';
 import { apiPatch, apiPost, ApiClientError } from '@/lib/api-client';
@@ -26,6 +26,8 @@ export interface SignupPlan {
   interval: 'month' | 'year';
   price_cents: number;
 }
+
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /** Supabase's own wording is written for a developer console, not a visitor; translate the common ones. */
 function friendlyAuthError(message: string): string {
@@ -81,6 +83,11 @@ export function SignupForm({
       return;
     }
 
+    // The charity list falls back to built-in sample content when the database has none configured
+    // yet (see content/fallback.ts); its ids are readable slugs, not real ids, and must never be sent
+    // to the server. A real charity's id is always a UUID, so that is what is checked for here.
+    const validCharityId = UUID_PATTERN.test(charityId) ? charityId : null;
+
     setStatus('submitting');
     try {
       const supabase = browserClient();
@@ -88,7 +95,7 @@ export function SignupForm({
         email,
         password,
         options: {
-          data: { full_name: fullName, charity_id: charityId, charity_percent: charityPercent },
+          data: validCharityId ? { full_name: fullName, charity_id: validCharityId, charity_percent: charityPercent } : { full_name: fullName },
           emailRedirectTo: `${location.origin}${ROUTES.login}?confirmed=1&plan=${planCode}`,
         },
       });
@@ -101,7 +108,7 @@ export function SignupForm({
       }
 
       // A session came back immediately (confirmation disabled on this project). Finish setup now.
-      await apiPatch('/api/me', { charity_id: charityId, charity_percent: charityPercent });
+      if (validCharityId) await apiPatch('/api/me', { charity_id: validCharityId, charity_percent: charityPercent });
       const { url } = await apiPost<{ url: string }>('/api/checkout', { plan_code: planCode });
       location.href = url;
     } catch (err) {
@@ -178,7 +185,7 @@ export function SignupForm({
               <h2 className="type-h4 text-fg">{SIGNUP.sections.plan.title}</h2>
               <p className="type-small text-fg-muted">{SIGNUP.sections.plan.text}</p>
             </div>
-            <div role="radiogroup" aria-label={SIGNUP.sections.plan.title} className="grid grid-cols-1 gap-3 xs:grid-cols-2">
+            <Grid as="div" cols={2} className="gap-3" role="radiogroup" aria-label={SIGNUP.sections.plan.title}>
               {plans.map((p) => {
                 const selected = p.code === planCode;
                 return (
@@ -206,7 +213,7 @@ export function SignupForm({
                   </label>
                 );
               })}
-            </div>
+            </Grid>
           </Stack>
 
           <Stack gap="md">

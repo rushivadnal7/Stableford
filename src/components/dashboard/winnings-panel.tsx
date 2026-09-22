@@ -4,7 +4,7 @@ import { Loader2, Upload } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { Badge, Card } from '@/components/ui/surface';
 import { FormNotice } from '@/components/ui/field';
-import { Stack } from '@/components/ui/layout';
+import { Cluster, Stack } from '@/components/ui/layout';
 import { DASHBOARD } from '@/content/dashboard';
 import { apiPost, ApiClientError } from '@/lib/api-client';
 import { CONFIG } from '@/lib/config';
@@ -96,7 +96,7 @@ export function WinningsPanel({ items: initialItems, totalCents, paidCents, pend
           <h2 className="type-h4 text-fg">{T.title}</h2>
         </div>
 
-        <div className="grid grid-cols-3 gap-4">
+        <Cluster gap="lg" justify="between">
           <div>
             <p className="type-caption text-fg-muted">{T.total}</p>
             <p className="type-num mt-1 text-lg text-fg">{formatMoney(totalCents)}</p>
@@ -109,7 +109,7 @@ export function WinningsPanel({ items: initialItems, totalCents, paidCents, pend
             <p className="type-caption text-fg-muted">{T.pending}</p>
             <p className="type-num mt-1 text-lg text-fg">{formatMoney(pendingCents)}</p>
           </div>
-        </div>
+        </Cluster>
 
         {items.length === 0 ? (
           <p className="type-body text-fg-muted">{T.none}</p>

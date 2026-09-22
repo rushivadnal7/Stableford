@@ -16,7 +16,7 @@ import puppeteer from 'puppeteer-core';
 const OUT = path.resolve('tests/responsive/out');
 const PORT = process.env.PORT ?? '3200';
 const BASE = process.env.BASE_URL ?? `http://localhost:${PORT}`;
-const ROUTES = ['/', '/this-page-does-not-exist'];
+const ROUTES = ['/', '/signup', '/login', '/charities', '/this-page-does-not-exist'];
 const VIEWPORTS = [
   [320, 640], [360, 780], [390, 844], [430, 932], // phones
   [768, 1024], // tablet
@@ -96,6 +96,13 @@ function audit({ width, touchBelow, minTap, minFont }) {
     for (const el of document.querySelectorAll(selector)) {
       if (!visible(el) || el.closest('p')) continue; // links inside a sentence are exempt
       if (el.matches('a[href="#main"]')) continue; // skip link is off-screen until focused
+      // A small native radio/checkbox is exempt when its own <label> wrap is big enough: clicking
+      // anywhere in that label activates the input (standard, accessible HTML), so the real tap
+      // target is the label, not the little box the browser draws.
+      if (el.matches('input[type=radio], input[type=checkbox]')) {
+        const label = el.closest('label');
+        if (label && label.getBoundingClientRect().height >= minTap - 0.5) continue;
+      }
       const r = el.getBoundingClientRect();
       const iconOnly = !(el.textContent || '').trim();
       if (r.height < minTap - 0.5 || (iconOnly && r.width < minTap - 0.5) || r.width < 24) {
@@ -167,7 +174,8 @@ try {
       await new Promise((r) => setTimeout(r, 900));
 
       const problems = await page.evaluate(audit, { width, touchBelow: TOUCH_BELOW, minTap: MIN_TAP, minFont: MIN_FONT });
-      const slug = `${route === '/' ? 'home' : '404'}-${width}`;
+      const routeSlug = route === '/' ? 'home' : route === '/this-page-does-not-exist' ? '404' : route.replace(/\//g, '') || 'home';
+      const slug = `${routeSlug}-${width}`;
       await page.screenshot({ path: path.join(OUT, `${slug}.png`), fullPage: true });
       await page.close();
 

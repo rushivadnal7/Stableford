@@ -98,7 +98,7 @@ export default async function CharitiesDirectoryPage({
       </div>
 
       {items.length === 0 ? (
-        <p className="type-body mt-block text-fg-muted">{CHARITIES_PAGE.empty}</p>
+        <p className="type-body mt-block text-fg-muted">{q || category ? CHARITIES_PAGE.empty : CHARITIES_PAGE.emptyAll}</p>
       ) : (
         <Grid as="ul" cols={3} className="mt-block">
           {items.map((charity, i) => (

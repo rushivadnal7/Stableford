@@ -39,6 +39,7 @@ export const DASHBOARD = {
     save: 'Save changes',
     saved: 'Saved.',
     noneSelected: 'No charity selected yet.',
+    noneAvailable: 'No charities are set up yet. Check back soon.',
   },
 
   draws: {

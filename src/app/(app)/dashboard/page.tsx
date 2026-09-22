@@ -7,7 +7,6 @@ import { SubscriptionCard, type SubscriptionInfo } from '@/components/dashboard/
 import { WinningsPanel } from '@/components/dashboard/winnings-panel';
 import { Eyebrow } from '@/components/ui/heading';
 import { Grid, Stack } from '@/components/ui/layout';
-import { Section } from '@/components/ui/section';
 import { FormNotice } from '@/components/ui/field';
 import { DASHBOARD } from '@/content/dashboard';
 import { unwrap } from '@/lib/db';
@@ -36,7 +35,9 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
   };
 
   return (
-    <Section>
+    // A plain container, not <Section>: that component's section-y padding is sized for a spacious
+    // marketing page, not a data-dense dashboard people return to daily.
+    <div className="container-page py-block">
       <Stack gap="lg" className="mb-block">
         <Eyebrow>{DASHBOARD.welcomeBack(user.profile.full_name)}</Eyebrow>
         {checkout === 'success' && <FormNotice tone="success">{DASHBOARD.checkoutSuccess}</FormNotice>}
@@ -68,6 +69,6 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
           <ProfilePanel fullName={user.profile.full_name} email={user.profile.email} />
         </Stack>
       </Grid>
-    </Section>
+    </div>
   );
 }
