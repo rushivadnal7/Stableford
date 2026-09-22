@@ -29,6 +29,8 @@
   --duration-slower: 900ms;
   --reveal-distance: 1.25rem;
   --stagger: 90ms; /* delay between siblings that animate in one after another */
+  /* How long the hero story lasts, in screens of scrolling. Shorter on phones, where a screen scrolls fast. */
+  --hero-runway: 380svh;
 
   /* Stacking order, lowest to highest. */
   --z-raised: 10;
@@ -74,6 +76,11 @@
   --text-6xl: clamp(2.75rem, 1.5rem + 6vw, 5.5rem);
   --text-6xl--line-height: 1;
   --text-6xl--letter-spacing: -0.032em;
+
+  /* The opening headline: large serif, set tight. Only the hero uses it. */
+  --text-hero: clamp(3rem, 1.4rem + 6.2vw, 6.5rem);
+  --text-hero--line-height: 0.95;
+  --text-hero--letter-spacing: -0.035em;
 
   --font-weight-*: initial;
   --font-weight-regular: 400;
@@ -170,6 +177,14 @@
     color-mix(in oklab, var(--palette-lime) 70%, var(--palette-hunter)) 0%,
     var(--palette-hunter) 48%,
     var(--palette-bokara) 100%
+  );
+
+  /* The hero's sky: soft cream at the top, sage at the horizon, so bronze and green both read against it. */
+  --background-image-sky: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--palette-lime) 12%, var(--palette-whisper)) 0%,
+    color-mix(in oklab, var(--palette-lime) 30%, var(--palette-whisper)) 62%,
+    color-mix(in oklab, var(--palette-lime) 52%, var(--palette-whisper)) 100%
   );
 
   /* Motion. */

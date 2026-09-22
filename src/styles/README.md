@@ -11,6 +11,7 @@ Components never contain a raw value, and a test fails if one sneaks in.
 | `theme.css` | Meaning: colour **roles** (`bg`, `fg`, `action`, ...) for the light and dark themes | You want a role to look different, or need a new role |
 | `utilities.css` | Named building blocks: `type-h2`, `type-eyebrow`, `container-page`, `section-y`, ... | You need a new text style or layout block |
 | `motion.css` | The scroll-reveal behaviour | Reveal timing or distance changes (values are in `tokens.css`) |
+| `hero.css` | The home page's scroll-driven 3D story: the runway, the pinned screen, the capsule mask | You change the hero's layout (see the root README's "The hero's 3D story") |
 | `base.css` | Element defaults: body, focus ring, selection, reduced motion | Rarely |
 | `../lib/fonts.ts` | The three typefaces | You swap a font |
 

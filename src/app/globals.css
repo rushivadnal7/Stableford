@@ -1,7 +1,8 @@
-/* Import order matters: Tailwind, then tokens (raw values), theme (roles), base, utilities, motion. */
+/* Import order matters: Tailwind, then tokens (raw values), theme (roles), base, utilities, motion, hero. */
 @import 'tailwindcss';
 @import '../styles/tokens.css';
 @import '../styles/theme.css';
 @import '../styles/base.css';
 @import '../styles/utilities.css';
 @import '../styles/motion.css';
+@import '../styles/hero.css';
