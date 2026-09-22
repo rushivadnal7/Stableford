@@ -20,5 +20,7 @@ export const DELETE = api(async (req, { params }: { params: Params }) => {
   const { data } = await admin.from('scores').select('user_id').eq('id', params.id).maybeSingle();
   await deleteScore(admin, params.id);
   await audit(admin, actorId, 'score.delete', 'user', data?.user_id ?? null, { scoreId: params.id });
-  return { ok: true };
+  // Mirrors the member's own DELETE /api/scores/[id]: hand back the refreshed list, so the admin UI
+  // (the same ScoresPanel component the member dashboard uses) never needs a second round trip.
+  return { scores: data ? await listScores(admin, data.user_id) : [] };
 });

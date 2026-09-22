@@ -71,7 +71,28 @@ function ScoreForm({
   );
 }
 
-export function ScoresPanel({ scores: initialScores, canEdit }: { scores: Score[]; canEdit: boolean }) {
+/**
+ * Also used, with different endpoints, on the admin's per-member page (ADM-02: edit any user's
+ * scores). `addUrl`/`itemUrl` point at the admin routes there; a member editing their own history
+ * never needs them, so the defaults are the member's own /api/scores.
+ */
+export function ScoresPanel({
+  scores: initialScores,
+  canEdit,
+  addUrl = '/api/scores',
+  itemUrl = (id: string) => `/api/scores/${id}`,
+  title = T.title,
+  lead = T.lead,
+  showSubscriberNotice = true,
+}: {
+  scores: Score[];
+  canEdit: boolean;
+  addUrl?: string;
+  itemUrl?: (id: string) => string;
+  title?: string;
+  lead?: string;
+  showSubscriberNotice?: boolean;
+}) {
   const [scores, setScores] = useState(initialScores);
   const [adding, setAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -82,7 +103,7 @@ export function ScoresPanel({ scores: initialScores, canEdit }: { scores: Score[
     setBusy(true);
     setError(null);
     try {
-      const res = await apiPost<{ scores: Score[] }>('/api/scores', values);
+      const res = await apiPost<{ scores: Score[] }>(addUrl, values);
       setScores(res.scores);
       setAdding(false);
     } catch (err) {
@@ -96,7 +117,7 @@ export function ScoresPanel({ scores: initialScores, canEdit }: { scores: Score[
     setBusy(true);
     setError(null);
     try {
-      const res = await apiPatch<{ scores: Score[] }>(`/api/scores/${id}`, values);
+      const res = await apiPatch<{ scores: Score[] }>(itemUrl(id), values);
       setScores(res.scores);
       setEditingId(null);
     } catch (err) {
@@ -110,7 +131,7 @@ export function ScoresPanel({ scores: initialScores, canEdit }: { scores: Score[
     if (!confirm(T.deleteConfirm)) return;
     setBusy(true);
     try {
-      const res = await apiDelete<{ scores: Score[] }>(`/api/scores/${id}`);
+      const res = await apiDelete<{ scores: Score[] }>(itemUrl(id));
       setScores(res.scores);
     } catch (err) {
       setError(err instanceof ApiClientError ? err.message : 'Could not delete that score.');
@@ -123,11 +144,11 @@ export function ScoresPanel({ scores: initialScores, canEdit }: { scores: Score[
     <Card>
       <Stack gap="lg">
         <div>
-          <h2 className="type-h4 text-fg">{T.title}</h2>
-          <p className="type-small mt-1 text-fg-muted">{T.lead}</p>
+          <h2 className="type-h4 text-fg">{title}</h2>
+          <p className="type-small mt-1 text-fg-muted">{lead}</p>
         </div>
 
-        {!canEdit && <FormNotice>{T.subscriberOnly}</FormNotice>}
+        {!canEdit && showSubscriberNotice && <FormNotice>{T.subscriberOnly}</FormNotice>}
 
         {scores.length === 0 ? (
           <p className="type-body text-fg-muted">{T.empty}</p>

@@ -35,4 +35,5 @@ export const apiGet = <T = unknown>(url: string) => apiFetch<T>(url);
 export const apiPost = <T = unknown>(url: string, data?: unknown) =>
   apiFetch<T>(url, { method: 'POST', body: data === undefined ? undefined : JSON.stringify(data) });
 export const apiPatch = <T = unknown>(url: string, data: unknown) => apiFetch<T>(url, { method: 'PATCH', body: JSON.stringify(data) });
+export const apiPut = <T = unknown>(url: string, data: unknown) => apiFetch<T>(url, { method: 'PUT', body: JSON.stringify(data) });
 export const apiDelete = <T = unknown>(url: string) => apiFetch<T>(url, { method: 'DELETE' });

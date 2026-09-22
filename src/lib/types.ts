@@ -127,3 +127,22 @@ export interface Winner {
   paid_by: string | null;
   created_at: string;
 }
+
+export interface Donation {
+  id: string;
+  user_id: string;
+  charity_id: string;
+  amount_cents: number;
+  stripe_session_id: string;
+  created_at: string;
+}
+
+export interface AuditLogEntry {
+  id: number;
+  actor_id: string | null;
+  action: string;
+  entity: string;
+  entity_id: string | null;
+  details: Record<string, unknown>;
+  created_at: string;
+}
