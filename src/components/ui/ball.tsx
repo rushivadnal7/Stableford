@@ -27,7 +27,14 @@ export function Ball({
   className?: string;
 }) {
   return (
-    <span className={cn('inline-flex shrink-0 items-center justify-center rounded-pill type-num', TONES[tone], SIZES[size], className)}>
+    <span
+      className={cn(
+        'inline-flex shrink-0 items-center justify-center rounded-pill type-num transition-transform motion-base hover:scale-110',
+        TONES[tone],
+        SIZES[size],
+        className,
+      )}
+    >
       {n}
     </span>
   );

@@ -69,8 +69,14 @@ export function FeeSplitCard({ priceCents, planName, interval }: { priceCents: n
 
       <ul aria-live="polite" className="flex flex-col divide-y divide-line">
         {rows.map((row) => (
-          <li key={row.key} className="flex items-center gap-4 py-4 first:pt-0 last:pb-0">
-            <span aria-hidden="true" className={`size-3 shrink-0 rounded-pill ${row.swatch}`} />
+          <li
+            key={row.key}
+            className="group -mx-2 flex items-center gap-4 rounded-lg px-2 py-4 transition-colors motion-base first:pt-0 last:pb-0 hover:bg-canvas-alt"
+          >
+            <span
+              aria-hidden="true"
+              className={`size-3 shrink-0 rounded-pill transition-transform motion-base group-hover:scale-125 ${row.swatch}`}
+            />
             <div className="flex-1">
               <p className="type-label text-fg">{row.label}</p>
               <p className="type-small text-fg-muted">{row.text}</p>

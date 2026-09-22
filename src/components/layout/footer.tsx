@@ -6,8 +6,9 @@ import { FOOTER } from '@/content/home';
 import { ROUTES } from '@/lib/routes';
 import { SITE } from '@/lib/site';
 
-/** A link with a comfortable tap height. */
-const LINK = 'type-small inline-flex min-h-touch items-center text-fg-muted transition-colors hover:text-fg';
+/** A link with a comfortable tap height. Nudges right on hover, the same small "go" gesture as a button's arrow. */
+const LINK =
+  'type-small inline-flex min-h-touch items-center text-fg-muted transition-[color,transform] motion-base hover:translate-x-1 hover:text-fg';
 
 export function Footer() {
   return (

@@ -23,16 +23,18 @@ export function Faq() {
             <div className="border-t border-line">
               {FAQ.items.map((item) => (
                 <details key={item.q} name="faq" className="group border-b border-line">
-                  <summary className="type-h4 flex min-h-touch list-none items-center justify-between gap-6 py-6 text-fg transition-colors hover:text-accent-text [&::-webkit-details-marker]:hidden">
-                    {item.q}
-                    <ChevronDown className="size-5 shrink-0 transition-transform motion-base group-open:rotate-180" aria-hidden />
+                  <summary className="group/row type-h4 flex min-h-touch list-none items-center justify-between gap-6 py-6 text-fg transition-colors hover:text-accent-text [&::-webkit-details-marker]:hidden">
+                    <span className="transition-transform motion-base group-hover/row:translate-x-1">{item.q}</span>
+                    <ChevronDown
+                      className="size-5 shrink-0 transition-transform motion-base group-hover/row:translate-y-0.5 group-open:rotate-180"
+                      aria-hidden
+                    />
                   </summary>
                   <p className="type-body max-w-copy pb-6 text-fg-muted">{item.a}</p>
                 </details>
               ))}
             </div>
           </Reveal>
-          
         }
       />
     </Section>

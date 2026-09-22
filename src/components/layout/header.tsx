@@ -10,7 +10,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-header border-b border-line bg-canvas/85 pt-safe backdrop-blur-lg">
       <div className="container-page flex h-header items-center justify-between gap-3 lg:gap-6">
-        <Link href={ROUTES.home} aria-label={`${SITE.name}, home`} className="flex min-h-touch items-center">
+        <Link href={ROUTES.home} aria-label={`${SITE.name}, home`} className="group flex min-h-touch items-center">
           <Wordmark />
         </Link>
 

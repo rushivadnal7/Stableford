@@ -27,8 +27,8 @@ export function Prizes() {
           <Stack as="ul" gap="md">
             {PRIZES.tiers.map((tier, i) => (
               <Reveal as="li" key={tier.tier} delay={i * 90}>
-                <Card className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-8">
-                  <p className="type-stat shrink-0 text-fg sm:w-40">
+                <Card className="group flex flex-col gap-4 transition-colors motion-slow hover:border-line-strong sm:flex-row sm:items-center sm:gap-8">
+                  <p className="type-stat shrink-0 text-fg transition-colors motion-base group-hover:text-accent-text sm:w-40">
                     {tier.share}
                     <span className="text-fg-muted">%</span>
                   </p>
@@ -41,7 +41,11 @@ export function Prizes() {
                   </div>
                   <span aria-hidden="true" className="hidden gap-1.5 sm:flex">
                     {Array.from({ length: tier.tier }, (_, dot) => (
-                      <span key={dot} className="size-2.5 rounded-pill bg-accent" />
+                      <span
+                        key={dot}
+                        className="size-2.5 rounded-pill bg-accent transition-transform motion-base group-hover:scale-125"
+                        style={{ transitionDelay: `${dot * 40}ms` }}
+                      />
                     ))}
                   </span>
                 </Card>
