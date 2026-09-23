@@ -7,9 +7,9 @@ Subscribers pay monthly or yearly, log their latest five Stableford scores, and 
 draw where their scores are matched against the drawn numbers. Part of every fee goes to a charity they choose.
 An admin runs the draws, manages charities and users, and verifies and pays winners.
 
-**Status:** the backend (database, business logic, full JSON API, see [API.md](API.md)) is complete. On the web
-interface, the design system and the home page are done; sign-up, sign-in, the dashboards and the admin panel are next.
-220 automated tests cover it.
+**Status:** complete end to end — backend (database, business logic, full JSON API, see [API.md](API.md)), and the
+web interface: home page, sign-up/sign-in, the member dashboard, the charity directory and the full admin panel
+(overview, users, draws, charities, winners). 126 unit tests plus 119 integration tests cover it.
 
 ## Stack
 
@@ -42,6 +42,20 @@ npm run dev
 | `player1` to `player8@stableford.demo` | `Stableford#2026` | active players, so a simulated draw has a pool |
 
 Sign in through Supabase Auth to get an access token, then call the API (see [API.md](API.md)).
+
+## Demo accounts (hosted project)
+
+These two accounts already exist on the hosted Supabase project this app runs against (not the local `db:start`
+stack), pre-confirmed and ready to sign in with, so anyone can try the whole site end to end — public pages, the
+member dashboard and the full admin panel — without seeding or configuring anything:
+
+| Account | Email | Password | Access |
+|---|---|---|---|
+| Admin | `rushikesh.admin@gmail.com` | `Admin@123` | Everything: `/admin` overview, users, draws (simulate and publish), charities, winners review and payout |
+| Member | `rushikeshvadnal7+test@gmail.com` | `Stableford#Test1` | Regular subscriber: dashboard, scores, subscription, charity giving |
+
+Sign in at `/login` with either. Point `.env.local` at the hosted project's URL and anon key (not a local
+`supabase start`) to use them while running `npm run dev` or `npm run build && npm start`.
 
 ## Scripts
 
@@ -194,8 +208,8 @@ Commits follow Conventional Commits. CI runs lint, type check, unit tests and a 
 
 ## Not done yet
 
-- The rest of the web interface: sign up and sign in, the member dashboard, the charity directory and the admin panel.
-  Their links (`/signup`, `/login`, `/charities`) currently lead to a branded 404. The session-refresh proxy for cookie
-  sessions arrives with the sign-in pages.
 - Integration tests in CI (they need a Supabase stack; the recipe is `supabase start` then `npm run test:integration`).
 - Email notifications beyond Supabase Auth emails, and scheduled (automatic) draws.
+- A custom SMTP sender for Supabase Auth emails — the built-in sender's rate limit is low, so repeated sign-ups
+  in quick succession during testing can be throttled. The [demo accounts](#demo-accounts-hosted-project) above are
+  pre-confirmed via the Auth admin API specifically to avoid this.

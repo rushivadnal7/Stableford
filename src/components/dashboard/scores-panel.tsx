@@ -73,14 +73,16 @@ function ScoreForm({
 
 /**
  * Also used, with different endpoints, on the admin's per-member page (ADM-02: edit any user's
- * scores). `addUrl`/`itemUrl` point at the admin routes there; a member editing their own history
- * never needs them, so the defaults are the member's own /api/scores.
+ * scores). `addUrl`/`itemBaseUrl` point at the admin routes there; a member editing their own
+ * history never needs them, so the defaults are the member's own /api/scores. These must stay
+ * plain strings (not functions) — this page is rendered from a Server Component, and React can't
+ * serialize a function across that boundary.
  */
 export function ScoresPanel({
   scores: initialScores,
   canEdit,
   addUrl = '/api/scores',
-  itemUrl = (id: string) => `/api/scores/${id}`,
+  itemBaseUrl = '/api/scores',
   title = T.title,
   lead = T.lead,
   showSubscriberNotice = true,
@@ -88,7 +90,7 @@ export function ScoresPanel({
   scores: Score[];
   canEdit: boolean;
   addUrl?: string;
-  itemUrl?: (id: string) => string;
+  itemBaseUrl?: string;
   title?: string;
   lead?: string;
   showSubscriberNotice?: boolean;
@@ -117,7 +119,7 @@ export function ScoresPanel({
     setBusy(true);
     setError(null);
     try {
-      const res = await apiPatch<{ scores: Score[] }>(itemUrl(id), values);
+      const res = await apiPatch<{ scores: Score[] }>(`${itemBaseUrl}/${id}`, values);
       setScores(res.scores);
       setEditingId(null);
     } catch (err) {
@@ -131,7 +133,7 @@ export function ScoresPanel({
     if (!confirm(T.deleteConfirm)) return;
     setBusy(true);
     try {
-      const res = await apiDelete<{ scores: Score[] }>(itemUrl(id));
+      const res = await apiDelete<{ scores: Score[] }>(`${itemBaseUrl}/${id}`);
       setScores(res.scores);
     } catch (err) {
       setError(err instanceof ApiClientError ? err.message : 'Could not delete that score.');
