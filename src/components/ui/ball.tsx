@@ -29,7 +29,7 @@ export function Ball({
   return (
     <span
       className={cn(
-        'inline-flex shrink-0 items-center justify-center rounded-pill type-num transition-transform motion-base hover:scale-110',
+        'inline-flex shrink-0 items-center justify-center rounded-pill type-num transition-shadow motion-base hover:shadow-soft',
         TONES[tone],
         SIZES[size],
         className,

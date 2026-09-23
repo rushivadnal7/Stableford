@@ -75,7 +75,7 @@ export function FeeSplitCard({ priceCents, planName, interval }: { priceCents: n
           >
             <span
               aria-hidden="true"
-              className={`size-3 shrink-0 rounded-pill transition-transform motion-base group-hover:scale-125 ${row.swatch}`}
+              className={`size-3 shrink-0 rounded-pill opacity-60 transition-opacity motion-base group-hover:opacity-100 ${row.swatch}`}
             />
             <div className="flex-1">
               <p className="type-label text-fg">{row.label}</p>

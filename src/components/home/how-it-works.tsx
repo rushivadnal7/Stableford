@@ -26,7 +26,7 @@ export function HowItWorks() {
             <Reveal as="li" key={step.title} delay={i * 90} className="h-full">
               <Card interactive className="group flex h-full flex-col gap-5">
                 <div className="flex items-center justify-between">
-                  <span className="grid size-12 place-items-center rounded-pill bg-canvas-alt transition-[background-color,transform] motion-slow group-hover:scale-110 group-hover:bg-accent/25 text-action">
+                  <span className="grid size-12 place-items-center rounded-pill bg-canvas-alt transition-colors motion-slow group-hover:bg-accent/25 text-action">
                     <Icon className="size-5" aria-hidden />
                   </span>
                   <span className="type-num text-sm text-fg-muted transition-colors motion-base group-hover:text-accent-text">0{i + 1}</span>

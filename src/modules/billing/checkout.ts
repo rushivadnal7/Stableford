@@ -5,6 +5,7 @@ import { CONFIG } from '@/lib/config';
 import { unwrap, unwrapMaybe } from '@/lib/db';
 import { appEnv } from '@/lib/env';
 import { AppError, conflict, unprocessable } from '@/lib/errors';
+import { charityHref } from '@/lib/routes';
 import { stripe } from '@/lib/stripe';
 import { adminClient } from '@/lib/supabase/admin';
 import type { Plan } from '@/lib/types';
@@ -28,11 +29,12 @@ async function ensureCustomer(ctx: AuthContext, client: Stripe): Promise<string>
   return customer.id;
 }
 
-const redirects = () => {
+const redirects = (kind: 'subscription' | 'donation' = 'subscription', cancelPath = '/signup?checkout=cancelled') => {
   const base = appEnv().APP_URL;
-  // A cancelled checkout goes back to signup (where the plan and charity choice are still on
-  // screen) rather than the dashboard, which they may not have access to yet.
-  return { success_url: `${base}/dashboard?checkout=success`, cancel_url: `${base}/signup?checkout=cancelled` };
+  // A cancelled subscription checkout goes back to signup (where the plan and charity choice are
+  // still on screen) rather than the dashboard, which they may not have access to yet. A donation
+  // is independent of subscribing, so it returns to wherever it was started instead.
+  return { success_url: `${base}/dashboard?checkout=success&type=${kind}`, cancel_url: `${base}${cancelPath}` };
 };
 
 function requireUrl(session: Stripe.Checkout.Session): { url: string } {
@@ -79,8 +81,8 @@ export async function createSubscriptionCheckout(ctx: AuthContext, planCode: 'mo
 
 /** A one-off donation, independent of gameplay (PRD section 08.1). Recorded by the webhook once paid. */
 export async function createDonationCheckout(ctx: AuthContext, input: z.output<typeof donationSchema>, client: Stripe = stripe()) {
-  const charity = unwrapMaybe(await ctx.db.from('charities').select('id, name').eq('id', input.charity_id).eq('is_active', true).maybeSingle()) as
-    | { id: string; name: string }
+  const charity = unwrapMaybe(await ctx.db.from('charities').select('id, name, slug').eq('id', input.charity_id).eq('is_active', true).maybeSingle()) as
+    | { id: string; name: string; slug: string }
     | null;
   if (!charity) throw unprocessable('charity_not_found', 'That charity is not available.');
 
@@ -91,7 +93,7 @@ export async function createDonationCheckout(ctx: AuthContext, input: z.output<t
       { quantity: 1, price_data: { currency: CONFIG.currency, unit_amount: input.amount_cents, product_data: { name: `Donation to ${charity.name}` } } },
     ],
     metadata: { type: 'donation', user_id: ctx.userId, charity_id: charity.id },
-    ...redirects(),
+    ...redirects('donation', `${charityHref(charity.slug)}?checkout=cancelled`),
   });
   return requireUrl(session);
 }

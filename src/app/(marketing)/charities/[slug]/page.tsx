@@ -4,13 +4,15 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { CATEGORY_ART, DEFAULT_CATEGORY_ART } from '@/components/charities/category-art';
+import { DonateForm } from '@/components/charities/donate-form';
 import { ButtonLink } from '@/components/ui/button';
 import { Accent, Eyebrow } from '@/components/ui/heading';
 import { Grid, Stack } from '@/components/ui/layout';
 import { Section } from '@/components/ui/section';
 import { Badge, Card } from '@/components/ui/surface';
 import { CHARITY_DETAIL } from '@/content/charities-page';
-import { ROUTES, signupHref } from '@/lib/routes';
+import { pageUser } from '@/lib/auth-page';
+import { charityHref, ROUTES, signupHref } from '@/lib/routes';
 import { anonClient } from '@/lib/supabase/user';
 import { getCharity } from '@/modules/charities/service';
 
@@ -32,7 +34,7 @@ function formatEventDate(iso: string) {
 
 export default async function CharityDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const charity = await getCharity(anonClient(), slug).catch(() => null);
+  const [charity, user] = await Promise.all([getCharity(anonClient(), slug).catch(() => null), pageUser()]);
   if (!charity) notFound();
 
   const { icon: Icon, tint } = CATEGORY_ART[charity.category] ?? DEFAULT_CATEGORY_ART;
@@ -99,6 +101,15 @@ export default async function CharityDetailPage({ params }: { params: Promise<{ 
             ))}
           </Grid>
         )}
+      </div>
+
+      <div className="mt-block max-w-copy">
+        <DonateForm
+          charityId={charity.id}
+          charityName={charity.name}
+          signedIn={!!user}
+          loginHref={`${ROUTES.login}?next=${encodeURIComponent(charityHref(charity.slug))}`}
+        />
       </div>
     </Section>
   );

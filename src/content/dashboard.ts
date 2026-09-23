@@ -3,6 +3,7 @@
 export const DASHBOARD = {
   welcomeBack: (name: string) => `Welcome back${name ? `, ${name}` : ''}.`,
   checkoutSuccess: 'You’re subscribed. Your first draw entry is your next five scores.',
+  donationSuccess: 'Thank you — your donation is on its way to the charity.',
 
   subscription: {
     title: 'Subscription',

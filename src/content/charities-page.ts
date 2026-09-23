@@ -17,4 +17,13 @@ export const CHARITY_DETAIL = {
   noEvents: 'No events scheduled right now.',
   cta: 'Subscribe with this charity',
   featured: 'Featured',
+  donate: {
+    title: 'Make a one-off donation',
+    lead: (name: string) => `Give directly to ${name}, no subscription required.`,
+    signInLead: (name: string) => `Sign in to send a one-off donation straight to ${name}.`,
+    signInCta: 'Sign in to donate',
+    amountLabel: 'Amount',
+    customLabel: 'Or enter your own amount (USD)',
+    cta: (dollars: number) => `Donate $${dollars}`,
+  },
 } as const;

@@ -10,7 +10,7 @@ const cardStyles = cva('rounded-xl border p-card', {
       flat: 'border-transparent bg-canvas-alt',
     },
     interactive: {
-      true: 'transition-[transform,box-shadow,border-color] motion-base hover:-translate-y-1 hover:border-line-strong hover:shadow-lift',
+      true: 'transition-[box-shadow,border-color] motion-base hover:border-line-strong hover:shadow-lift',
     },
   },
   defaultVariants: { variant: 'surface' },

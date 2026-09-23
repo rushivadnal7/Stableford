@@ -27,7 +27,7 @@ export function MobileNav() {
         aria-controls={panelId}
         aria-label={open ? 'Close menu' : 'Open menu'}
         onClick={() => setOpen((value) => !value)}
-        className="grid size-touch place-items-center rounded-pill text-fg transition-[background-color,transform] motion-fast hover:bg-fg/8 active:scale-90"
+        className="grid size-touch place-items-center rounded-pill text-fg transition-colors motion-fast hover:bg-fg/8 active:bg-fg/15"
       >
         {open ? <X className="size-5" aria-hidden /> : <Menu className="size-5" aria-hidden />}
       </button>

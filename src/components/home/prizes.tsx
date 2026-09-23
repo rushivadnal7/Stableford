@@ -43,7 +43,7 @@ export function Prizes() {
                     {Array.from({ length: tier.tier }, (_, dot) => (
                       <span
                         key={dot}
-                        className="size-2.5 rounded-pill bg-accent transition-transform motion-base group-hover:scale-125"
+                        className="size-2.5 rounded-pill bg-accent opacity-50 transition-opacity motion-base group-hover:opacity-100"
                         style={{ transitionDelay: `${dot * 40}ms` }}
                       />
                     ))}

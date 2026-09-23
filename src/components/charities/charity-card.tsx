@@ -30,11 +30,11 @@ export function CharityCard({ charity, priority = false }: { charity: CharityCar
               alt=""
               fill
               sizes="(min-width: 64rem) 25vw, (min-width: 40rem) 50vw, 100vw"
-              className="object-cover transition-transform motion-slow group-hover:scale-105"
+              className="object-cover"
               priority={priority}
             />
           ) : (
-            <IconComp className="size-10 text-action transition-transform motion-slow group-hover:scale-110" aria-hidden />
+            <IconComp className="size-10 text-action" aria-hidden />
           )}
           {charity.is_featured && (
             <Badge variant="accent" className="absolute top-3 left-3 bg-canvas">

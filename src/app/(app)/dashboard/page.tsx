@@ -15,8 +15,8 @@ import { getDashboard } from '@/modules/dashboard/service';
 
 export const metadata: Metadata = { title: 'Dashboard' };
 
-export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ checkout?: string }> }) {
-  const { checkout } = await searchParams;
+export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ checkout?: string; type?: string }> }) {
+  const { checkout, type } = await searchParams;
   const user = await requireUser();
   const [dashboard, charityRows] = await Promise.all([
     getDashboard(user),
@@ -40,7 +40,9 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
     <div className="container-page py-block">
       <Stack gap="lg" className="mb-block">
         <Eyebrow>{DASHBOARD.welcomeBack(user.profile.full_name)}</Eyebrow>
-        {checkout === 'success' && <FormNotice tone="success">{DASHBOARD.checkoutSuccess}</FormNotice>}
+        {checkout === 'success' && (
+          <FormNotice tone="success">{type === 'donation' ? DASHBOARD.donationSuccess : DASHBOARD.checkoutSuccess}</FormNotice>
+        )}
       </Stack>
 
       <Grid cols={2} className="items-start">
