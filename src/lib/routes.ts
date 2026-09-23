@@ -5,6 +5,7 @@ export const ROUTES = {
   login: '/login',
   charities: '/charities',
   dashboard: '/dashboard',
+  admin: '/admin',
 } as const;
 
 /** A charity's own page: /charities/the-slug. */

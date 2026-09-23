@@ -24,6 +24,15 @@ export function LoginForm({ next }: { next: string }) {
   const ids = { email: useId(), password: useId(), resetEmail: useId(), newPassword: useId() };
   const supabase = browserClient();
 
+  // The caller (an admin-only page redirecting here, a "next" deep link, etc.) always wins. Only
+  // the plain, unspecified case — visiting /login directly, landing on the default dashboard — asks
+  // who just signed in, so an admin goes straight to their panel instead of an empty member view.
+  async function landingPath(userId: string): Promise<string> {
+    if (next !== ROUTES.dashboard) return next;
+    const { data } = await supabase.from('profiles').select('role').eq('id', userId).maybeSingle();
+    return data?.role === 'admin' ? ROUTES.admin : ROUTES.dashboard;
+  }
+
   // A password-recovery link, or an email-confirmation link, lands here with a session Supabase's
   // client already established from the URL. Detect which, before showing the ordinary sign-in form.
   const [mode, setMode] = useState<Mode>('checking');
@@ -42,7 +51,7 @@ export function LoginForm({ next }: { next: string }) {
         setMode('set-new-password');
       } else if (event === 'SIGNED_IN' && session && mode === 'checking') {
         // A confirmation link, or an already-open session: go straight in.
-        location.href = next;
+        void landingPath(session.user.id).then((path) => (location.href = path));
       }
     });
     // If neither event fires shortly (a plain visit, no link), fall back to the sign-in form.
@@ -59,9 +68,9 @@ export function LoginForm({ next }: { next: string }) {
     setError(null);
     setBusy(true);
     try {
-      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
       if (signInError) throw signInError;
-      location.href = next;
+      location.href = await landingPath(data.user.id);
     } catch (err) {
       setBusy(false);
       setError(err instanceof Error ? friendlyAuthError(err.message) : 'Something went wrong.');
@@ -88,10 +97,11 @@ export function LoginForm({ next }: { next: string }) {
     }
     setBusy(true);
     try {
-      const { error: updateError } = await supabase.auth.updateUser({ password: newPassword });
+      const { data: updated, error: updateError } = await supabase.auth.updateUser({ password: newPassword });
       if (updateError) throw updateError;
       setMode('password-updated');
-      setTimeout(() => (location.href = next), 1200);
+      const path = await landingPath(updated.user.id);
+      setTimeout(() => (location.href = path), 1200);
     } catch (err) {
       setBusy(false);
       setError(err instanceof Error ? friendlyAuthError(err.message) : 'Something went wrong.');
