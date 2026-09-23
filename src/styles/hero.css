@@ -208,7 +208,13 @@
   }
   .hero-rail-tick {
     position: relative;
-    padding-right: 1.5rem;
+    padding-block: 0.15rem;
+    padding-inline: 0.5rem 1.5rem;
+    margin-right: -0.5rem;
+    border-radius: var(--radius-pill);
+    /* The 3D scene scrolls behind this rail; a solid backdrop keeps the number legible whatever
+       the scene happens to be showing at that point (the dot below already does the same). */
+    background: var(--bg);
     color: var(--fg-muted);
     transition: color var(--duration-base) var(--ease-standard);
 
