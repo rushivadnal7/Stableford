@@ -6,6 +6,7 @@ import { CharityEvents } from '@/components/admin/charity-events';
 import { CharityForm, type CharityWithImage } from '@/components/admin/charity-form';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/surface';
+import { useToast } from '@/components/ui/toast';
 import { ADMIN_CHARITIES } from '@/content/admin';
 import { apiDelete, ApiClientError } from '@/lib/api-client';
 import { cn } from '@/lib/cn';
@@ -18,24 +19,25 @@ interface Row extends CharityWithImage {
 }
 
 export function CharitiesManager({ charities: initial }: { charities: Row[] }) {
+  const toast = useToast();
   const [charities, setCharities] = useState(initial);
   const [creating, setCreating] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
   async function remove(charity: Row) {
     if (!confirm(T.deleteConfirm)) return;
-    setError(null);
     try {
       const result = await apiDelete<{ deleted: boolean; deactivated: boolean }>(`/api/admin/charities/${charity.id}`);
       if (result.deleted) {
         setCharities((list) => list.filter((c) => c.id !== charity.id));
+        toast({ title: 'Charity deleted.', tone: 'success' });
       } else {
         setCharities((list) => list.map((c) => (c.id === charity.id ? { ...c, is_active: false, is_featured: false } : c)));
+        toast({ title: 'Charity hidden (it has history, so it was deactivated instead of deleted).', tone: 'info' });
       }
     } catch (err) {
-      setError(err instanceof ApiClientError ? err.message : 'Could not delete that charity.');
+      toast({ title: err instanceof ApiClientError ? err.message : 'Could not delete that charity.', tone: 'danger' });
     }
   }
 
@@ -56,8 +58,6 @@ export function CharitiesManager({ charities: initial }: { charities: Row[] }) {
           }}
         />
       )}
-
-      {error && <p className="type-small text-danger">{error}</p>}
 
       <ul className="flex flex-col gap-3">
         {charities.length === 0 && !creating && <p className="type-body text-fg-muted">{T.empty}</p>}

@@ -96,6 +96,10 @@ function audit({ width, touchBelow, minTap, minFont }) {
     for (const el of document.querySelectorAll(selector)) {
       if (!visible(el) || el.closest('p')) continue; // links inside a sentence are exempt
       if (el.matches('a[href="#main"]')) continue; // skip link is off-screen until focused
+      // A visually-hidden shim kept only for native form/autofill support (e.g. Radix's bubble
+      // <select> behind a custom dropdown) is not something a real user can tap; aria-hidden and
+      // tabindex="-1" together are how that pattern says so.
+      if (el.getAttribute('aria-hidden') === 'true' && el.tabIndex === -1) continue;
       // A small native radio/checkbox is exempt when its own <label> wrap is big enough: clicking
       // anywhere in that label activates the input (standard, accessible HTML), so the real tap
       // target is the label, not the little box the browser draws.

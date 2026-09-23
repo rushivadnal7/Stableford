@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Field, FormNotice, Select } from '@/components/ui/field';
 import { Stack } from '@/components/ui/layout';
 import { Card } from '@/components/ui/surface';
+import { useToast } from '@/components/ui/toast';
 import { ADMIN_USER_DETAIL } from '@/content/admin';
 import { apiPatch, ApiClientError } from '@/lib/api-client';
 import { CONFIG } from '@/lib/config';
@@ -25,23 +26,22 @@ export function UserGivingForm({
   charities: Array<{ id: string; name: string }>;
 }) {
   const ids = { charity: useId(), percent: useId() };
+  const toast = useToast();
   const [selected, setSelected] = useState(charityId ?? '');
   const [percent, setPercent] = useState(charityPercent);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [saved, setSaved] = useState(false);
   const dirty = selected !== (charityId ?? '') || percent !== charityPercent;
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
     setBusy(true);
     setError(null);
-    setSaved(false);
     try {
       const patch: Record<string, unknown> = { charity_percent: percent };
       if (selected) patch.charity_id = selected;
       await apiPatch(`/api/admin/users/${userId}`, patch);
-      setSaved(true);
+      toast({ title: T.saved, tone: 'success' });
     } catch (err) {
       setError(err instanceof ApiClientError ? err.message : 'Could not save that.');
     } finally {
@@ -62,10 +62,7 @@ export function UserGivingForm({
               <Select
                 id={ids.charity}
                 value={selected}
-                onChange={(e) => {
-                  setSelected(e.target.value);
-                  setSaved(false);
-                }}
+                onChange={(e) => setSelected(e.target.value)}
               >
                 <option value="">{T.none}</option>
                 {charities.map((c) => (
@@ -93,16 +90,12 @@ export function UserGivingForm({
               max={CONFIG.charity.maxPercent}
               step={1}
               value={percent}
-              onChange={(e) => {
-                setPercent(Number(e.target.value));
-                setSaved(false);
-              }}
+              onChange={(e) => setPercent(Number(e.target.value))}
               className="mt-2 h-touch w-full cursor-pointer accent-action"
             />
           </div>
 
           {error && <FormNotice>{error}</FormNotice>}
-          {saved && !error && <FormNotice tone="success">{T.saved}</FormNotice>}
 
           <Button type="submit" disabled={busy || !dirty} className="self-start">
             {busy ? <Loader2 className="size-4 animate-spin" aria-hidden /> : T.save}

@@ -5,6 +5,7 @@ import { useId, useState, type FormEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Field, FormNotice, TextInput } from '@/components/ui/field';
 import { Stack } from '@/components/ui/layout';
+import { useToast } from '@/components/ui/toast';
 import { ADMIN_CHARITIES } from '@/content/admin';
 import { apiDelete, apiPost, ApiClientError } from '@/lib/api-client';
 import type { CharityEvent } from '@/lib/types';
@@ -67,6 +68,7 @@ function EventForm({ charityId, onSaved, onCancel }: { charityId: string; onSave
 }
 
 export function CharityEvents({ charityId, events: initialEvents }: { charityId: string; events: CharityEvent[] }) {
+  const toast = useToast();
   const [events, setEvents] = useState(initialEvents);
   const [adding, setAdding] = useState(false);
 
@@ -75,8 +77,9 @@ export function CharityEvents({ charityId, events: initialEvents }: { charityId:
     try {
       await apiDelete(`/api/admin/events/${id}`);
       setEvents((list) => list.filter((e) => e.id !== id));
+      toast({ title: 'Event deleted.', tone: 'success' });
     } catch {
-      /* the row stays; a retry is enough for an admin tool */
+      toast({ title: 'Could not delete that event.', tone: 'danger' });
     }
   }
 
@@ -123,6 +126,7 @@ export function CharityEvents({ charityId, events: initialEvents }: { charityId:
           onSaved={(event) => {
             setEvents((list) => [...list, event]);
             setAdding(false);
+            toast({ title: 'Event added.', tone: 'success' });
           }}
         />
       )}

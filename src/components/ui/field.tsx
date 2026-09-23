@@ -1,6 +1,7 @@
+import * as RadixSelect from '@radix-ui/react-select';
 import { cva } from 'class-variance-authority';
-import { ChevronDown } from 'lucide-react';
-import type { ComponentProps, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from 'react';
+import { Check, ChevronDown } from 'lucide-react';
+import { Children, isValidElement, type ComponentProps, type OptionHTMLAttributes, type ReactElement, type ReactNode, type TextareaHTMLAttributes } from 'react';
 import { cn } from '@/lib/cn';
 
 /**
@@ -8,7 +9,7 @@ import { cn } from '@/lib/cn';
  * dashboard's score and giving forms). Sizing matches the buttons (h-12 / h-touch) so a field next
  * to a button lines up, and every control shares one focus and error treatment.
  */
-const controlStyles = cva(
+export const controlStyles = cva(
   [
     'h-12 w-full rounded-lg border bg-surface px-4 type-body text-fg outline-none',
     'transition-colors motion-base placeholder:text-fg-muted',
@@ -77,19 +78,84 @@ export function Textarea({
   return <textarea className={cn(controlStyles({ invalid }), 'h-auto min-h-24 resize-y py-3', className)} aria-invalid={invalid} {...rest} />;
 }
 
+/** A Radix Select value can never be the empty string, so a placeholder `<option value="">` maps to this internally. */
+const EMPTY_OPTION = '__select_empty__';
+
+/**
+ * A fully custom dropdown, not the browser's native one — built on Radix's unstyled Select so keyboard
+ * nav, typeahead and screen-reader semantics stay correct (that part is genuinely easy to get wrong by
+ * hand). The public API still looks like a plain `<select>` (`value`, `onChange`, `<option>` children),
+ * so every existing call site keeps working unchanged.
+ */
 export function Select({
   invalid,
   className,
   children,
-  ...rest
-}: SelectHTMLAttributes<HTMLSelectElement> & { invalid?: boolean }) {
+  value,
+  onChange,
+  id,
+  disabled,
+  required,
+  'aria-label': ariaLabel,
+}: {
+  invalid?: boolean;
+  className?: string;
+  children: ReactNode;
+  value: string;
+  onChange: (event: { target: { value: string } }) => void;
+  id?: string;
+  disabled?: boolean;
+  required?: boolean;
+  'aria-label'?: string;
+}) {
+  const options = Children.toArray(children).filter(isValidElement) as ReactElement<OptionHTMLAttributes<HTMLOptionElement>>[];
+
   return (
-    <div className={cn('relative', className)}>
-      <select className={cn(controlStyles({ invalid }), 'cursor-pointer appearance-none pr-11')} aria-invalid={invalid} {...rest}>
-        {children}
-      </select>
-      <ChevronDown aria-hidden className="pointer-events-none absolute top-1/2 right-4 size-4 -translate-y-1/2 text-fg-muted" />
-    </div>
+    <RadixSelect.Root
+      value={value === '' ? EMPTY_OPTION : value}
+      onValueChange={(next) => onChange({ target: { value: next === EMPTY_OPTION ? '' : next } })}
+      disabled={disabled}
+      required={required}
+    >
+      <RadixSelect.Trigger
+        id={id}
+        aria-invalid={invalid}
+        aria-label={ariaLabel}
+        className={cn(controlStyles({ invalid }), 'inline-flex cursor-pointer items-center justify-between gap-2 pr-4 data-placeholder:text-fg-muted', className)}
+      >
+        <RadixSelect.Value />
+        <RadixSelect.Icon asChild>
+          <ChevronDown aria-hidden className="size-4 shrink-0 text-fg-muted" />
+        </RadixSelect.Icon>
+      </RadixSelect.Trigger>
+      <RadixSelect.Portal>
+        <RadixSelect.Content
+          position="popper"
+          sideOffset={6}
+          className="z-overlay w-(--radix-select-trigger-width) overflow-hidden rounded-lg border border-line bg-surface shadow-lift"
+        >
+          <RadixSelect.Viewport className="max-h-72 p-1">
+            {options.map((option) => {
+              const raw = String(option.props.value ?? '');
+              const itemValue = raw === '' ? EMPTY_OPTION : raw;
+              return (
+                <RadixSelect.Item
+                  key={itemValue}
+                  value={itemValue}
+                  disabled={option.props.disabled}
+                  className="type-body flex min-h-touch cursor-pointer items-center justify-between gap-2 rounded-md px-3 text-fg outline-none transition-colors motion-fast data-highlighted:bg-canvas-alt data-disabled:pointer-events-none data-disabled:opacity-50"
+                >
+                  <RadixSelect.ItemText>{option.props.children}</RadixSelect.ItemText>
+                  <RadixSelect.ItemIndicator>
+                    <Check aria-hidden className="size-4 text-accent-text" />
+                  </RadixSelect.ItemIndicator>
+                </RadixSelect.Item>
+              );
+            })}
+          </RadixSelect.Viewport>
+        </RadixSelect.Content>
+      </RadixSelect.Portal>
+    </RadixSelect.Root>
   );
 }
 

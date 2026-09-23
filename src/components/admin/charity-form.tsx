@@ -5,6 +5,7 @@ import { useId, useRef, useState, type FormEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Checkbox, Field, FormNotice, Select, TextInput, Textarea } from '@/components/ui/field';
 import { Stack } from '@/components/ui/layout';
+import { useToast } from '@/components/ui/toast';
 import { ADMIN_CHARITIES } from '@/content/admin';
 import { apiPatch, apiPost, ApiClientError } from '@/lib/api-client';
 import { browserClient } from '@/lib/supabase/browser';
@@ -29,6 +30,7 @@ const slugify = (name: string) =>
  * on why: server route bodies are size-limited), then its path is saved with the rest of the form. */
 export function CharityForm({ charity, onSaved, onCancel }: { charity?: CharityWithImage; onSaved: (charity: CharityWithImage) => void; onCancel: () => void }) {
   const ids = { name: useId(), slug: useId(), category: useId(), summary: useId(), description: useId() };
+  const toast = useToast();
   const fileRef = useRef<HTMLInputElement>(null);
   const isEdit = !!charity;
 
@@ -75,6 +77,7 @@ export function CharityForm({ charity, onSaved, onCancel }: { charity?: CharityW
         ? await apiPatch<{ charity: CharityWithImage }>(`/api/admin/charities/${charity.id}`, body)
         : await apiPost<{ charity: CharityWithImage }>('/api/admin/charities', body);
       onSaved(result.charity);
+      toast({ title: isEdit ? 'Charity updated.' : 'Charity created.', tone: 'success' });
     } catch (err) {
       setError(err instanceof ApiClientError ? err.message : 'Could not save that charity.');
     } finally {

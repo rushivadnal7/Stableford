@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Field, FormNotice, Select } from '@/components/ui/field';
 import { Stack } from '@/components/ui/layout';
 import { Card } from '@/components/ui/surface';
+import { useToast } from '@/components/ui/toast';
 import { DASHBOARD } from '@/content/dashboard';
 import { apiPatch, ApiClientError } from '@/lib/api-client';
 import { CONFIG } from '@/lib/config';
@@ -23,11 +24,11 @@ export function GivingPanel({
   charities: Array<{ id: string; name: string }>;
 }) {
   const ids = { charity: useId(), percent: useId() };
+  const toast = useToast();
   const [selected, setSelected] = useState(charityId ?? charities[0]?.id ?? '');
   const [percent, setPercent] = useState(charityPercent);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [saved, setSaved] = useState(false);
 
   const dirty = selected !== charityId || percent !== charityPercent;
 
@@ -35,10 +36,9 @@ export function GivingPanel({
     event.preventDefault();
     setBusy(true);
     setError(null);
-    setSaved(false);
     try {
       await apiPatch<{ profile: Profile }>('/api/me', { charity_id: selected, charity_percent: percent });
-      setSaved(true);
+      toast({ title: T.saved, tone: 'success' });
     } catch (err) {
       setError(err instanceof ApiClientError ? err.message : 'Could not save that.');
     } finally {
@@ -67,7 +67,7 @@ export function GivingPanel({
           </div>
 
           <Field label="Charity" htmlFor={ids.charity}>
-            <Select id={ids.charity} value={selected} onChange={(e) => { setSelected(e.target.value); setSaved(false); }}>
+            <Select id={ids.charity} value={selected} onChange={(e) => setSelected(e.target.value)}>
               {charities.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
@@ -92,7 +92,7 @@ export function GivingPanel({
               max={CONFIG.charity.maxPercent}
               step={1}
               value={percent}
-              onChange={(e) => { setPercent(Number(e.target.value)); setSaved(false); }}
+              onChange={(e) => setPercent(Number(e.target.value))}
               className="mt-2 h-touch w-full cursor-pointer accent-action"
             />
             <div className="type-num mt-1 flex justify-between text-xs text-fg-muted">
@@ -102,7 +102,6 @@ export function GivingPanel({
           </div>
 
           {error && <FormNotice>{error}</FormNotice>}
-          {saved && !error && <FormNotice tone="success">{T.saved}</FormNotice>}
 
           <Button type="submit" disabled={busy || !dirty} className="self-start">
             {busy ? <Loader2 className="size-4 animate-spin" aria-hidden /> : T.save}

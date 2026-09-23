@@ -5,6 +5,7 @@ import { useRef, useState } from 'react';
 import { Badge, Card } from '@/components/ui/surface';
 import { FormNotice } from '@/components/ui/field';
 import { Cluster, Stack } from '@/components/ui/layout';
+import { useToast } from '@/components/ui/toast';
 import { DASHBOARD } from '@/content/dashboard';
 import { apiPost, ApiClientError } from '@/lib/api-client';
 import { CONFIG } from '@/lib/config';
@@ -31,6 +32,7 @@ const VERIFICATION_TONE: Record<WinningItem['verification_status'], 'neutral' | 
 };
 
 function ProofUpload({ winnerId, onSubmitted }: { winnerId: string; onSubmitted: () => void }) {
+  const toast = useToast();
   const inputRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -53,6 +55,7 @@ function ProofUpload({ winnerId, onSubmitted }: { winnerId: string; onSubmitted:
       if (uploadError) throw uploadError;
       await apiPost(`/api/winners/${winnerId}/proof`, { path });
       onSubmitted();
+      toast({ title: 'Proof submitted for review.', tone: 'success' });
     } catch (err) {
       setError(err instanceof ApiClientError ? err.message : err instanceof Error ? err.message : 'Could not upload that file.');
     } finally {

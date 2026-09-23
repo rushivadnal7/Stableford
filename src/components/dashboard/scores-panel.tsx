@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Field, FormNotice, TextInput } from '@/components/ui/field';
 import { Stack } from '@/components/ui/layout';
 import { Card } from '@/components/ui/surface';
+import { useToast } from '@/components/ui/toast';
 import { DASHBOARD } from '@/content/dashboard';
 import { apiDelete, apiPatch, apiPost, ApiClientError } from '@/lib/api-client';
 import { CONFIG } from '@/lib/config';
@@ -95,6 +96,7 @@ export function ScoresPanel({
   lead?: string;
   showSubscriberNotice?: boolean;
 }) {
+  const toast = useToast();
   const [scores, setScores] = useState(initialScores);
   const [adding, setAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -108,6 +110,7 @@ export function ScoresPanel({
       const res = await apiPost<{ scores: Score[] }>(addUrl, values);
       setScores(res.scores);
       setAdding(false);
+      toast({ title: 'Score added.', tone: 'success' });
     } catch (err) {
       setError(err instanceof ApiClientError ? err.message : 'Could not save that score.');
     } finally {
@@ -122,6 +125,7 @@ export function ScoresPanel({
       const res = await apiPatch<{ scores: Score[] }>(`${itemBaseUrl}/${id}`, values);
       setScores(res.scores);
       setEditingId(null);
+      toast({ title: 'Score updated.', tone: 'success' });
     } catch (err) {
       setError(err instanceof ApiClientError ? err.message : 'Could not save that score.');
     } finally {
@@ -135,6 +139,7 @@ export function ScoresPanel({
     try {
       const res = await apiDelete<{ scores: Score[] }>(`${itemBaseUrl}/${id}`);
       setScores(res.scores);
+      toast({ title: 'Score deleted.', tone: 'success' });
     } catch (err) {
       setError(err instanceof ApiClientError ? err.message : 'Could not delete that score.');
     } finally {

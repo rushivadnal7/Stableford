@@ -25,6 +25,7 @@
     "seed:charities": "tsx scripts/seed-charities.ts"
   },
   "dependencies": {
+    "@radix-ui/react-select": "^2.3.7",
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.109.0",
     "@tailwindcss/postcss": "^4.3.3",

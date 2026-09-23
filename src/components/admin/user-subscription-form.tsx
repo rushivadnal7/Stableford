@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox, Field, FormNotice, Select } from '@/components/ui/field';
 import { Stack } from '@/components/ui/layout';
 import { Card } from '@/components/ui/surface';
+import { useToast } from '@/components/ui/toast';
 import { ADMIN_USER_DETAIL } from '@/content/admin';
 import { apiPut, ApiClientError } from '@/lib/api-client';
 import { formatMoney } from '@/lib/format';
@@ -27,21 +28,20 @@ function formatDate(iso: string) {
 /** A manual override (support/demo use, ADM-03). The next real Stripe webhook still wins. */
 export function UserSubscriptionForm({ userId, subscription, plans }: { userId: string; subscription: AdminSubscription | null; plans: Array<{ code: 'monthly' | 'yearly'; name: string; price_cents: number }> }) {
   const ids = { plan: useId(), status: useId() };
+  const toast = useToast();
   const [planCode, setPlanCode] = useState<'monthly' | 'yearly'>(subscription?.plan?.code ?? plans[0]?.code ?? 'monthly');
   const [status, setStatus] = useState(subscription?.status ?? 'active');
   const [cancelAtPeriodEnd, setCancelAtPeriodEnd] = useState(subscription?.cancel_at_period_end ?? false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [saved, setSaved] = useState(false);
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
     setBusy(true);
     setError(null);
-    setSaved(false);
     try {
       await apiPut(`/api/admin/users/${userId}/subscription`, { plan_code: planCode, status, cancel_at_period_end: cancelAtPeriodEnd });
-      setSaved(true);
+      toast({ title: T.saved, tone: 'success' });
     } catch (err) {
       setError(err instanceof ApiClientError ? err.message : 'Could not save that.');
     } finally {
@@ -88,7 +88,6 @@ export function UserSubscriptionForm({ userId, subscription, plans }: { userId: 
           <Checkbox label={T.cancelLabel} checked={cancelAtPeriodEnd} onChange={(e) => setCancelAtPeriodEnd(e.target.checked)} />
 
           {error && <FormNotice>{error}</FormNotice>}
-          {saved && !error && <FormNotice tone="success">{T.saved}</FormNotice>}
 
           <Button type="submit" disabled={busy} className="self-start">
             {busy ? <Loader2 className="size-4 animate-spin" aria-hidden /> : T.save}

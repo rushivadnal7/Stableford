@@ -7,6 +7,7 @@ import { FormNotice, TextInput } from '@/components/ui/field';
 import { Stack } from '@/components/ui/layout';
 import { Badge } from '@/components/ui/surface';
 import { EmptyRow, Table, Tbody, Td, Th, Thead, Tr } from '@/components/ui/table';
+import { useToast } from '@/components/ui/toast';
 import { ADMIN_WINNERS } from '@/content/admin';
 import { apiPost, ApiClientError } from '@/lib/api-client';
 import { formatMoney } from '@/lib/format';
@@ -46,6 +47,7 @@ function RejectForm({ onSubmit, busy }: { onSubmit: (note: string) => void; busy
 }
 
 export function WinnersReviewTable({ winners: initial }: { winners: WinnerRow[] }) {
+  const toast = useToast();
   const [winners, setWinners] = useState(initial);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [rejectingId, setRejectingId] = useState<string | null>(null);
@@ -58,6 +60,7 @@ export function WinnersReviewTable({ winners: initial }: { winners: WinnerRow[] 
       const { winner } = await apiPost<{ winner: WinnerRow }>(`/api/admin/winners/${id}/review`, { decision, note });
       setWinners((list) => list.map((w) => (w.id === id ? { ...w, ...winner } : w)));
       setRejectingId(null);
+      toast({ title: decision === 'approve' ? 'Winner approved.' : 'Winner rejected.', tone: 'success' });
     } catch (err) {
       setError(err instanceof ApiClientError ? err.message : 'Could not update that review.');
     } finally {
@@ -71,6 +74,7 @@ export function WinnersReviewTable({ winners: initial }: { winners: WinnerRow[] 
     try {
       const { winner } = await apiPost<{ winner: WinnerRow }>(`/api/admin/winners/${id}/pay`);
       setWinners((list) => list.map((w) => (w.id === id ? { ...w, ...winner } : w)));
+      toast({ title: 'Marked as paid.', tone: 'success' });
     } catch (err) {
       setError(err instanceof ApiClientError ? err.message : 'Could not mark that as paid.');
     } finally {

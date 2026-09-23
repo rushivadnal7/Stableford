@@ -5,6 +5,7 @@ import { useId, useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Field, FormNotice, Select, TextInput } from '@/components/ui/field';
+import { useToast } from '@/components/ui/toast';
 import { ADMIN_DRAWS } from '@/content/admin';
 import { apiPost, ApiClientError } from '@/lib/api-client';
 import type { Draw } from '@/lib/types';
@@ -17,6 +18,7 @@ function currentPeriod() {
 
 export function DrawCreateForm() {
   const router = useRouter();
+  const toast = useToast();
   const ids = { period: useId(), mode: useId(), weighting: useId() };
   const [open, setOpen] = useState(false);
   const [period, setPeriod] = useState(currentPeriod());
@@ -45,6 +47,7 @@ export function DrawCreateForm() {
         weighting: mode === 'algorithmic' ? weighting : undefined,
       });
       router.push(`/admin/draws/${draw.id}`);
+      toast({ title: 'Draw created.', tone: 'success' });
     } catch (err) {
       setBusy(false);
       setError(err instanceof ApiClientError ? err.message : 'Could not create that draw.');

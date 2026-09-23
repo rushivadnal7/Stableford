@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Field, FormNotice, Select, TextInput } from '@/components/ui/field';
 import { Stack } from '@/components/ui/layout';
 import { Card } from '@/components/ui/surface';
+import { useToast } from '@/components/ui/toast';
 import { ADMIN_USER_DETAIL } from '@/content/admin';
 import { apiPatch, ApiClientError } from '@/lib/api-client';
 import type { Profile } from '@/lib/types';
@@ -15,21 +16,20 @@ const T = ADMIN_USER_DETAIL.profile;
 /** Name and role. Role is protected server-side: an admin cannot demote themselves (see updateUser()). */
 export function UserProfileForm({ user, isSelf }: { user: Profile; isSelf: boolean }) {
   const ids = { name: useId(), role: useId() };
+  const toast = useToast();
   const [name, setName] = useState(user.full_name);
   const [role, setRole] = useState<'member' | 'admin'>(user.role);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [saved, setSaved] = useState(false);
   const dirty = name !== user.full_name || role !== user.role;
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
     setBusy(true);
     setError(null);
-    setSaved(false);
     try {
       await apiPatch(`/api/admin/users/${user.id}`, { full_name: name, role });
-      setSaved(true);
+      toast({ title: T.saved, tone: 'success' });
     } catch (err) {
       setError(err instanceof ApiClientError ? err.message : 'Could not save that.');
     } finally {
@@ -52,7 +52,6 @@ export function UserProfileForm({ user, isSelf }: { user: Profile; isSelf: boole
             </Select>
           </Field>
           {error && <FormNotice>{error}</FormNotice>}
-          {saved && !error && <FormNotice tone="success">{T.saved}</FormNotice>}
           <Button type="submit" disabled={busy || !dirty} className="self-start">
             {busy ? <Loader2 className="size-4 animate-spin" aria-hidden /> : T.save}
           </Button>
