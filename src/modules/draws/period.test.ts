@@ -25,4 +25,10 @@ describe('periods', () => {
     expect(upcomingDrawPeriod(now, ['2026-10', '2026-09'])).toBe('2026-11');
     expect(upcomingDrawPeriod(new Date('2026-12-20T00:00:00Z'), ['2026-12'])).toBe('2027-01');
   });
+
+  it('skips past a run of several already-published months in a row, not just one', () => {
+    const now = new Date('2026-09-15T00:00:00Z');
+    expect(upcomingDrawPeriod(now, ['2026-09', '2026-10'])).toBe('2026-11');
+    expect(upcomingDrawPeriod(now, ['2026-09', '2026-10', '2026-11', '2026-12'])).toBe('2027-01');
+  });
 });

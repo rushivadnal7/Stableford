@@ -8,8 +8,13 @@ export function nextPeriod(period: string): string {
   return month === 12 ? `${year + 1}-01` : `${year}-${String(month + 1).padStart(2, '0')}`;
 }
 
-/** The draw a member should look forward to: this month's, unless it has already been published. */
+/**
+ * The draw a member should look forward to: this month's, unless it (or any run of months right
+ * after it) has already been published — e.g. an admin who publishes ahead of schedule.
+ */
 export function upcomingDrawPeriod(now: Date, publishedPeriods: readonly string[]): string {
-  const current = periodOf(now);
-  return publishedPeriods.includes(current) ? nextPeriod(current) : current;
+  const published = new Set(publishedPeriods);
+  let period = periodOf(now);
+  while (published.has(period)) period = nextPeriod(period);
+  return period;
 }
